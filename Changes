@@ -1,0 +1,65 @@
+POE::Component::SmokeBox ChangeLog
+==================================
+
+	- Made the kill code slightly more robust.
+
+0.16	Tue Feb 10 12:41:00 GMT 2009
+	- Found a bug in Env::Sanctify, which is fixed.
+	- Sanctify %ENV really well before forking.
+	- Detect AUTOMATED_TESTING in kill tests and use 
+	  no_grp_kill => 1 
+
+0.14	Thu Feb  5 22:36:53 GMT 2009
+	- [rt #43027] Applied patch from oxdeadbeef
+	- Fixed refcount management in JobQueue
+	- Overhauled the testsuite.
+
+0.12	Wed Feb  4 10:56:50 GMT 2009
+	- Stop POE debug ENV vars propagating to the forked process.
+
+0.10	Tue Feb  3 22:11:02 GMT 2009
+	- added CPAN::Reporter::Smoker backend
+	- skip test_loop test on Solaris
+
+0.08	Sat Jan 31 22:16:57 GMT 2009
+	- Fixed Win32 support, thanks to Dave Golden for
+	  pointing that out.
+
+0.06	Fri Dec 19 09:20:42 GMT 2008
+	- Added 'pty-pipe' conduit and IO::Pty as a strongly 
+	  recommended prereq.
+
+0.04	Fri Dec  5 12:33:50 GMT 2008
+	- 'kill' hackery in Backend for solaris
+
+0.01_10	Wed Oct 22 21:49:08 BST 2008
+	- Amended the tests that were wacking out on Dragonflybsd 
+	  and certain fbsd boxen.
+
+0.01_09	Mon Oct 20 15:53:20 BST 2008
+	- Amended some of the longer running tests.
+
+0.01_07	Fri Oct 10 22:46:40 BST 2008
+	- Trying to see if it is a problem with older T::H for
+	  hangs on certain CPAN tester configurations.
+
+0.01_06	Wed Oct  8 16:24:59 BST 2008
+	- Fixed a problem with the 00_dump_stuff.t test.
+
+0.01_05 Wed Oct  8 10:37:11 BST 2008
+	- Changed the API for ::Job and ::JobQueue. We don't
+	  define smokers in the Job object now, this was doomed
+	  to fatal failure.
+
+0.01_04	Tue Oct  7 17:20:13 BST 2008
+	- Added loop detection to ::Backend 
+
+0.01_03	Fri Oct  3 13:25:26 BST 2008
+	- Fixed bug in JobQueue, we were only processing
+	  the first job that was submitted. Doh.
+
+0.01_02	Fri Oct  3 12:10:18 BST 2008
+	- Added PERL5_SMOKEBOX_DEBUG env to ::Backend
+
+0.01_01	Mon Sep  8 12:47:26 BST 2008
+	- Initial public developer release
