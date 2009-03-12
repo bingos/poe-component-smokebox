@@ -1,7 +1,10 @@
 POE::Component::SmokeBox ChangeLog
 ==================================
 
+0.18	Thu Mar 12 21:38:11 GMT 2009
 	- Made the kill code slightly more robust.
+	- Use String::Perl::Warnings to skip over perl
+	  warnings in the loop detection code.
 
 0.16	Tue Feb 10 12:41:00 GMT 2009
 	- Found a bug in Env::Sanctify, which is fixed.

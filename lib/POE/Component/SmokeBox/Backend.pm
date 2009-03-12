@@ -7,6 +7,7 @@ use Storable;
 use POE qw(Wheel::Run);
 use Digest::MD5 qw(md5_hex);
 use Env::Sanctify;
+use String::Perl::Warnings qw(is_warning);
 use Module::Pluggable search_path => 'POE::Component::SmokeBox::Backend', sub_name => 'backends', except => 'POE::Component::SmokeBox::Backend::Base';
 use vars qw($VERSION);
 
@@ -249,6 +250,7 @@ sub _detect_loop {
   my $self = shift;
   my $input = shift || return;
   return if $self->{_loop_detect};
+  return if is_warning($input);
   my $digest = md5_hex( $input );
   $self->{_digests}->{ $digest }++;
   return unless ++$self->{_digests}->{ $digest } > 300;
