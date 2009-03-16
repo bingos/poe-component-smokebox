@@ -1,6 +1,9 @@
 POE::Component::SmokeBox ChangeLog
 ==================================
 
+0.20	Mon Mar 16 07:08:09 GMT 2009
+	- Move where we detect perl warnings to the stderr handler
+
 0.18	Thu Mar 12 21:38:11 GMT 2009
 	- Made the kill code slightly more robust.
 	- Use String::Perl::Warnings to skip over perl
