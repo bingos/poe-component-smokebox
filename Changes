@@ -1,6 +1,10 @@
 POE::Component::SmokeBox ChangeLog
 ==================================
 
+0.22	Wed Apr  1 23:09:12 BST 2009
+	- Tweak the loop detection yet again. skip over
+	  CPANPLUS messages this time.
+
 0.20	Mon Mar 16 07:08:09 GMT 2009
 	- Move where we detect perl warnings to the stderr handler
 

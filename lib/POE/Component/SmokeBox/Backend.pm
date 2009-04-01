@@ -251,6 +251,7 @@ sub _detect_loop {
   my $self = shift;
   my $input = shift || return;
   return if $self->{_loop_detect};
+  return if $input =~ /^\[(MSG|ERROR)\]/;
   my $digest = md5_hex( $input );
   $self->{_digests}->{ $digest }++;
   return unless ++$self->{_digests}->{ $digest } > 300;
