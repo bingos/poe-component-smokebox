@@ -1,6 +1,12 @@
 POE::Component::SmokeBox ChangeLog
 ==================================
 
+0.24	Thu Apr 16 15:40:52 BST 2009
+	- Reversioned all the modules to 0.24
+	- Updated Backend::CPAN::Reporter to add CPAN::Index->reload; $CPAN::META->reset_tested;
+	  Suggested by Dave Golden
+	- Set repository in META.yml
+
 0.22	Wed Apr  1 23:09:12 BST 2009
 	- Tweak the loop detection yet again. skip over
 	  CPANPLUS messages this time.

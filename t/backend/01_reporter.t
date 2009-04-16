@@ -6,7 +6,7 @@ use_ok('POE::Component::SmokeBox::Backend::CPAN::Reporter');
 my %data = (
         check => [ '-MCPAN::Reporter', '-e', 1 ],
         index => [ '-MCPAN', '-MCPAN::HandleConfig', '-e', 'CPAN::HandleConfig->load; CPAN::Shell::setup_output; CPAN::Index->force_reload();' ],
-        smoke => [ '-MCPAN', '-e', 'my $module = shift; local $CPAN::Config->{test_report} = 1; test($module);' ],
+        smoke => [ '-MCPAN', '-e', 'my $module = shift; $CPAN::Config->{test_report} = 1; CPAN::Index->reload; $CPAN::META->reset_tested; test($module);' ],
 
 );
 

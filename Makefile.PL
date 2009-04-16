@@ -50,5 +50,5 @@ Any bug reports, feature requests, send an email to
 NOTICE
 
 sleep(5);
-
+eval "auto_set_repository";
 WriteAll();

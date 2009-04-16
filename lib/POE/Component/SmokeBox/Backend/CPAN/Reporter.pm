@@ -5,7 +5,7 @@ use warnings;
 use base qw(POE::Component::SmokeBox::Backend::Base);
 use vars qw($VERSION);
 
-$VERSION = '0.01';
+$VERSION = '0.24';
 
 sub _data {
   my $self = shift;
@@ -13,7 +13,7 @@ sub _data {
   {
         check => [ '-MCPAN::Reporter', '-e', 1 ],
         index => [ '-MCPAN', '-MCPAN::HandleConfig', '-e', 'CPAN::HandleConfig->load; CPAN::Shell::setup_output; CPAN::Index->force_reload();' ],
-        smoke => [ '-MCPAN', '-e', 'my $module = shift; local $CPAN::Config->{test_report} = 1; test($module);' ],
+        smoke => [ '-MCPAN', '-e', 'my $module = shift; $CPAN::Config->{test_report} = 1; CPAN::Index->reload; $CPAN::META->reset_tested; test($module);' ],
   };
   return;
 }
@@ -44,7 +44,7 @@ Returns [ '-MCPAN', '-MCPAN::HandleConfig', '-e', 'CPAN::HandleConfig->load; CPA
 
 =item C<smoke>
 
-Returns [ '-MCPAN', '-e', 'my $module = shift; local $CPAN::Config->{test_report} = 1; test($module);' ]
+Returns [ '-MCPAN', '-e', 'my $module = shift; $CPAN::Config->{test_report} = 1; CPAN::Index->reload; $CPAN::META->reset_tested; test($module);' ]
 
 =back
 
