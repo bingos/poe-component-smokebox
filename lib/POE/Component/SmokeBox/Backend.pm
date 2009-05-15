@@ -11,7 +11,7 @@ use String::Perl::Warnings qw(is_warning);
 use Module::Pluggable search_path => 'POE::Component::SmokeBox::Backend', sub_name => 'backends', except => 'POE::Component::SmokeBox::Backend::Base';
 use vars qw($VERSION);
 
-$VERSION = '0.24';
+$VERSION = '0.26';
 
 my $GOT_KILLFAM;
 my $GOT_PTY;

@@ -1,6 +1,10 @@
 POE::Component::SmokeBox ChangeLog
 ==================================
 
+0.26	Fri May 15 23:48:35 BST 2009
+	- Updated Makefile.PL
+	- Added SmokeInAbox Backend
+
 0.24	Thu Apr 16 15:40:52 BST 2009
 	- Reversioned all the modules to 0.24
 	- Updated Backend::CPAN::Reporter to add CPAN::Index->reload; $CPAN::META->reset_tested;
