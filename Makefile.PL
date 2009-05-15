@@ -4,6 +4,7 @@ use inc::Module::Install;
 name 'POE-Component-SmokeBox';
 author 'Chris Williams <chris@bingosnet.co.uk>';
 license 'perl';
+auto_license holder => 'Chris Williams';
 perl_version '5.006';
 abstract_from 'lib/POE/Component/SmokeBox.pm';
 version_from 'lib/POE/Component/SmokeBox.pm';
@@ -18,7 +19,7 @@ requires 'Object::Accessor' => 0;
 requires 'Digest::MD5' => 0;
 requires 'Env::Sanctify' => 0.04;
 requires 'String::Perl::Warnings' => 0.04;
-
+githubmeta;
 unless ( can_use 'IO::Pty' and not win32 ) {
     requires 'IO::Pty' => 0 if
        prompt( 'Do you want to install IO::Pty, it is highly recommended that you do [Y/n]?', 'Y' )
@@ -50,5 +51,4 @@ Any bug reports, feature requests, send an email to
 NOTICE
 
 sleep(5);
-eval "auto_set_repository";
 WriteAll();

@@ -19,10 +19,12 @@ sub spawn {
   $self->{session_id} = POE::Session->create(
 	object_states => [
 	   $self => { 
-		shutdown   => '_shutdown',
-		add_smoker => '_add_smoker',
-		del_smoker => '_del_smoker',
-		submit     => '_submit',
+		shutdown      => '_shutdown',
+		add_smoker    => '_add_smoker',
+		del_smoker    => '_del_smoker',
+		submit        => '_submit',
+		register_ui   => '_reg_ui',
+		unregister_ui => '_unreg_ui',
 	   },
 	   $self => [qw(_start)],
 	],
@@ -172,6 +174,12 @@ sub _submit {
   }
 
   return;
+}
+
+sub _reg_ui {
+}
+
+sub _unreg_ui {
 }
 
 "We've Got a Fuzzbox and We're Gonna Use It";
