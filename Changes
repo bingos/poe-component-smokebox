@@ -1,6 +1,9 @@
 POE::Component::SmokeBox ChangeLog
 ==================================
 
+0.28  Mon Jul 13 10:03:20 BST 2009
+  - Add weightings to STDOUT and STDERR in the looping output detection.
+
 0.26	Fri May 15 23:48:35 BST 2009
 	- Updated Makefile.PL
 	- Added SmokeInAbox Backend
