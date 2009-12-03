@@ -67,6 +67,7 @@ sub spawn {
   $opts{command} = lc $opts{command} || 'check';
   $opts{command} = 'check' unless grep { $_ eq $opts{command} } @cmds;
   $opts{perl} = $^X unless $opts{perl}; # and -e $opts{perl};
+  $opts{no_log} = 0 unless $opts{no_log};
   if ( $opts{command} eq 'smoke' and !$opts{module} ) {
      carp "You must specify a 'module' with 'smoke'\n";
      return;
@@ -190,7 +191,7 @@ sub _spawn_wheel {
 
 sub _sig_child {
   my ($kernel,$self,$thing,$pid,$status) = @_[KERNEL,OBJECT,ARG0..ARG2];
-  push @{ $self->{_wheel_log} }, "$thing $pid $status";
+  push @{ $self->{_wheel_log} }, "$thing $pid $status" if ! $self->{no_log};
   warn "$thing $pid $status\n" if $self->{debug} or $ENV{PERL5_SMOKEBOX_DEBUG};
   $kernel->delay( '_wheel_idle' );
   $self->{end_time} = time();
@@ -224,7 +225,7 @@ sub _wheel_stdout {
   my ($self, $input, $wheel_id) = @_[OBJECT, ARG0, ARG1];
   return if $self->{_killed};
   $self->{_wheel_time} = time();
-  push @{ $self->{_wheel_log} }, $input;
+  push @{ $self->{_wheel_log} }, $input if ! $self->{no_log};
   warn $input, "\n" if $self->{debug} or $ENV{PERL5_SMOKEBOX_DEBUG};
   if ( $self->_detect_loop( $input, 'stdout' ) ) {
     $self->{excess_kill} = 1;
@@ -237,7 +238,7 @@ sub _wheel_stderr {
   my ($self, $input, $wheel_id) = @_[OBJECT, ARG0, ARG1];
   return if $self->{_killed};
   $self->{_wheel_time} = time();
-  push @{ $self->{_wheel_log} }, $input;
+  push @{ $self->{_wheel_log} }, $input if ! $self->{no_log};
   warn $input, "\n" if $self->{debug} or $ENV{PERL5_SMOKEBOX_DEBUG};
   return if is_warning($input);
   if ( $self->_detect_loop( $input, 'stderr' ) ) {
@@ -281,7 +282,7 @@ sub _wheel_kill {
   my ($kernel,$self,$reason) = @_[KERNEL,OBJECT,ARG0];
   return if $self->{_killed};
   $self->{_killed} = 1;
-  push @{ $self->{_wheel_log} }, $reason;
+  push @{ $self->{_wheel_log} }, $reason if ! $self->{no_log};
   warn $reason, "\n" if $self->{debug} or $ENV{PERL5_SMOKEBOX_DEBUG};
   if ( $^O eq 'MSWin32' and $self->{wheel} ) {
     $self->{wheel}->kill();
@@ -375,6 +376,7 @@ Creates a new POE::Component::SmokeBox::Backend component. Takes a number of par
   'timeout', change runtime timeout, specified in seconds, default is 3600;
   'module', the module to process, mandatory if 'smoke' command is specified;
   'env', a hashref of %ENV values to set when processing;
+  'no_log', enable to not store the job output log, default is false;
 
 You may also pass in arbitary parameters which will passed back to you in the C<event> specified. These
 arbitary parameters must be prefixed with an underscore.

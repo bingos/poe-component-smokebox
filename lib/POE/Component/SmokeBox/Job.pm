@@ -17,6 +17,7 @@ sub new {
 	type    => { defined => 1, default => 'CPANPLUS::YACSmoke', },
 	command => { allow => [ qw(check index smoke) ], default => 'check', },
 	module  => { defined => 1 },
+	no_log	=> { defined => 1, allow => qr/^(?:0|1)$/, default => 0, },
   };
 
   my $args = check( $tmpl, { @_ }, 1 ) or return;
@@ -32,6 +33,7 @@ sub new {
 	command => [ qw(check index smoke) ],
 	module  => sub { defined $_[0]; },
 	id	=> sub { defined $_[0]; },
+	no_log	=> qr/^(?:0|1)$/,
   };
   $self->mk_accessors( $accessor_map );
   $self->$_( $args->{$_} ) for keys %{ $args };
@@ -40,7 +42,7 @@ sub new {
 
 sub dump_data {
   my $self = shift;
-  my @returns = qw(idle timeout type command);
+  my @returns = qw(idle timeout type command no_log);
   push @returns, 'module' if $self->command() eq 'smoke';
   return map { ( $_ => $self->$_ ) } @returns;
 }
@@ -79,6 +81,7 @@ Creates a new POE::Component::SmokeBox::Job object. Takes a number of parameters
   'type', the type of backend to use, default is 'CPANPLUS::YACSmoke';
   'command', the command to run, 'check', 'index' or 'smoke', default is 'check';
   'module', the distribution to smoke, mandatory if command is 'smoke';
+  'no_log', enable to not store the job output log, default is false;
 
 =back
 
@@ -107,6 +110,10 @@ The command to run, C<'check'>, C<'index'> or C<'smoke'>, default is C<'check'>.
 =item C<module>
 
 The distribution to smoke, mandatory if command is C<'smoke'>.
+
+=item C<no_log>
+
+Boolean value determining whether the job will store it's STDERR/STDOUT log, default 0.
 
 =item C<dump_data>
 

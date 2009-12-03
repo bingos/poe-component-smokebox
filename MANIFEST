@@ -60,6 +60,8 @@ t/backend/06_false_backend.t
 t/backend/07_test_idle.t
 t/backend/08_test_excess.t
 t/backend/09_test_loop.t
+t/backend/10_test_normal.t
+t/backend/11_test_nolog.t
 t/jobqueue/00_compile.t
 t/jobqueue/01_jobqueue.t
 t/jobqueue/02_smokers.t

@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use File::Spec;
-use Test::More tests => 12;
+use Test::More tests => 16;
 use POE;
 use_ok('POE::Component::SmokeBox::Backend');
 
@@ -41,8 +41,10 @@ sub _results {
   my ($kernel,$heap,$result) = @_[KERNEL,HEAP,ARG0];
   ok( $result->{$_}, "Found '$_'" ) for qw(command PID start_time end_time log status);
   ok( ref $result->{log} eq 'ARRAY', 'The log entry is an arrayref' );
+  ok( scalar @{ $result->{log} } > 0, 'The log contains something' );
   ok( $result->{module} eq $module, $module );
   ok( $result->{command} eq 'smoke', "We're smoking!" );
+  ok( ! exists $result->{$_}, "Did not find '$_'" ) for qw( idle_kill excess_kill term_kill );
   $kernel->delay( '_timeout' );
   return;
 }
