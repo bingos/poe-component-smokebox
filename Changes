@@ -1,6 +1,10 @@
 POE::Component::SmokeBox ChangeLog
 ==================================
 
+0.30  Thu Dec  3 10:12:06 GMT 2009
+  - Added no_log parameter to ::Job / ::Backend to conserve memory (apocal)
+  - Fixed wheel close bug, thanks to devin@#poe! (apocal)
+
 0.28  Mon Jul 13 10:03:20 BST 2009
   - Add weightings to STDOUT and STDERR in the looping output detection.
 
