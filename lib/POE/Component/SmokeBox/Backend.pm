@@ -174,7 +174,7 @@ sub _spawn_wheel {
     StdoutEvent => '_wheel_stdout',
     StderrEvent => '_wheel_stderr',
     ErrorEvent  => '_wheel_error',
-    CloseEvent  => '_wheel_close',
+    CloseEvent  => '_wheel_closed',
     ( $GOT_PTY ? ( Conduit => 'pty-pipe' ) : () ),
   );
   # Restore the %ENV values
@@ -193,7 +193,9 @@ sub _sig_child {
   my ($kernel,$self,$thing,$pid,$status) = @_[KERNEL,OBJECT,ARG0..ARG2];
   push @{ $self->{_wheel_log} }, "$thing $pid $status" if ! $self->{no_log};
   warn "$thing $pid $status\n" if $self->{debug} or $ENV{PERL5_SMOKEBOX_DEBUG};
+  $kernel->sig_handled();
   $kernel->delay( '_wheel_idle' );
+
   $self->{end_time} = time();
   delete $self->{_digests};
   delete $self->{_loop_detect};
@@ -206,19 +208,22 @@ sub _sig_child {
   $job->{module} = $self->{module} if $self->{command} eq 'smoke';
   $kernel->post( $self->{session}, $self->{event}, $job );
   $kernel->refcount_decrement( $self->{session}, __PACKAGE__ );
-  $kernel->sig_handled();
+  return;
 }
 
 sub _wheel_error {
-  $poe_kernel->delay( '_wheel_idle' );
-  delete $_[OBJECT]->{wheel};
-  undef;
+  my ($self,$operation,$errnum,$errstr,$wheel_id) = @_[OBJECT,ARG0..ARG3];
+  $errstr = "remote end closed" if $operation eq "read" and !$errnum;
+  warn "wheel $wheel_id generated $operation error $errnum: $errstr\n" if $self->{debug} or $ENV{PERL5_SMOKEBOX_DEBUG};
+  return;
 }
 
 sub _wheel_closed {
-  $poe_kernel->delay( '_wheel_idle' );
-  delete $_[OBJECT]->{wheel};
-  undef;
+  my ($kernel,$self) = @_[KERNEL,OBJECT];
+  $kernel->delay( '_wheel_idle' );
+  warn "wheel closed\n" if $self->{debug} or $ENV{PERL5_SMOKEBOX_DEBUG};
+  delete $self->{wheel};
+  return;
 }
 
 sub _wheel_stdout {
@@ -231,7 +236,7 @@ sub _wheel_stdout {
     $self->{excess_kill} = 1;
     $poe_kernel->yield( '_wheel_kill', 'Killing current run due to detection of looping output' );
   }
-  undef;
+  return;
 }
 
 sub _wheel_stderr {
@@ -245,7 +250,7 @@ sub _wheel_stderr {
     $self->{excess_kill} = 1;
     $poe_kernel->yield( '_wheel_kill', 'Killing current run due to detection of looping output' );
   }
-  undef;
+  return;
 }
 
 sub _detect_loop {
