@@ -43,7 +43,7 @@ sub _results {
   isa_ok( $results->{job}, 'POE::Component::SmokeBox::Job' );
   isa_ok( $results->{result}, 'POE::Component::SmokeBox::Result' );
   ok( $results->{submitted}, 'There was a value for submitted' );
-  ok( scalar $results->{result}->results() == 5, 'There was only one result' );
+  ok( scalar $results->{result}->results() == 5, 'There was only five results' );
   foreach my $res ( $results->{result}->results() ) {
      ok( ref $res eq 'HASH', 'The result is a hashref' );
      ok( defined $res->{$_}, "There is a '$_' entry" ) for qw(PID status start_time end_time perl log type command);

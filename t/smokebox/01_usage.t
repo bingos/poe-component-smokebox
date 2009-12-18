@@ -1,12 +1,13 @@
 use strict;
 use warnings;
 use File::Spec;
-use Test::More tests => 18;
+use Test::More tests => 20;
 use_ok('POE::Component::SmokeBox');
 use POE qw(Component::SmokeBox::Smoker Component::SmokeBox::Job);
 
 my $smokebox =  POE::Component::SmokeBox->spawn( options => { trace => 0 } );
 isa_ok( $smokebox, 'POE::Component::SmokeBox' );
+ok( $smokebox->delay() == 0, 'Delay is disabled' );
 
 POE::Session->create(
   package_states => [ 
@@ -26,6 +27,7 @@ sub _start {
   $smokebox->add_smoker( $smoker );
   ok( scalar $smokebox->queues() == 1, 'There is one jobqueue' );
   my $job = POE::Component::SmokeBox::Job->new();
+  ok( $job->delay() == 0, 'Delay is disabled' );
   $poe_kernel->post( $smokebox->session_id(), 'submit', job => $job, event => '_results', );
   $_[HEAP]->{smoker} = $smoker;
   return;

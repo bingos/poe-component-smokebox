@@ -15,6 +15,7 @@ sub spawn {
   my %params = @_;
   $params{lc $_} = delete $params{$_} for keys %params;
   my $options = delete $params{'options'};
+  $params{'delay'} = 0 unless exists $params{'delay'};
   my $self = bless \%params, $package;
   $self->{session_id} = POE::Session->create(
 	object_states => [
@@ -40,6 +41,20 @@ sub session_id {
 
 sub multiplicity {
   return $_[0]->{multiplicity};
+}
+
+sub delay {
+  if ( defined $_[1] ) {
+    # verify it's an int
+    if ( $_[1] !~ /^\d+$/ ) {
+      return;
+    } else {
+      $_[0]->{delay} = $_[1];
+      return $_[1];
+    }
+  } else {
+    return $_[0]->{delay};
+  }
 }
 
 sub queues {
@@ -99,7 +114,9 @@ sub _add_smoker {
   # If multiplicity start a job queue for each smoker object.
   if ( $self->{multiplicity} or scalar @{ $self->{queues} } == 0 ) {
     my $queue = { };
-    $queue->{queue} = POE::Component::SmokeBox::JobQueue->spawn();
+    $queue->{queue} = POE::Component::SmokeBox::JobQueue->spawn(
+      'delay' => $self->{delay},
+    );
     push @{ $queue->{smokers} }, $smoker;
     push @{ $self->{queues} }, $queue;
     return;
@@ -275,7 +292,8 @@ Creates a new session and returns an object. Takes a number of parameters:
   'options', a hashref of POE session options;
   'multiplicity', set to a true value to enable multiplicity, default is false;
   'smokers', an arrayref of POE::Component::SmokeBox::Smoker objects;
-  
+  'delay', the time in seconds to wait between job runs, default is 0;
+
 =back
 
 =head1 METHODS
@@ -290,6 +308,8 @@ Returns the L<POE::Session> ID of the smokebox component.
 
 Returns true or false depending on whether multiplicity is enabled or not.
 
+NOTE: If you enable multiplicity, you cannot use "delay" as an argument to SmokeBox::Job->new!
+
 =item C<queues>
 
 Returns a list of L<POE::Component::SmokeBox::JobQueue> objects that are currently active in the smokebox.
@@ -301,6 +321,11 @@ Takes one mandatory argument, a L<POE::Component::SmokeBox::Smoker> object to ad
 =item C<del_smoker>
 
 Takes one mandatory argument, a L<POE::Component::SmokeBox::Smoker> object to remove from the smokebox.
+
+=item C<delay>
+
+Sets the delay in seconds between job runs. Useful to "throttle" your smoker :) If called with no arguments, returns
+the current delay. This option will work even if multiplicity is enabled.
 
 =item C<submit>
 

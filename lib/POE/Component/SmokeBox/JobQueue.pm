@@ -16,6 +16,7 @@ sub spawn {
   my $package = shift;
   my %params = @_;
   $params{lc $_} = delete $params{$_} for keys %params;
+  $params{'delay'} = 0 unless exists $params{'delay'};
   my $options = delete $params{'options'};
   my $self = bless \%params, $package;
   $self->{session_id} = POE::Session->create(
@@ -25,7 +26,7 @@ sub spawn {
 		submit     => '_submit',
 		cancel     => '_cancel',
            },
-           $self => [qw(_start _process_queue _backend_done)],
+           $self => [qw(_start _process_queue _backend_done _process_queue_delayed)],
         ],
 	heap => $self,
 	( ref($options) eq 'HASH' ? ( options => $options ) : () ),
@@ -70,16 +71,37 @@ sub _shutdown {
 #  $kernel->refcount_decrement( $_->{session}, __PACKAGE__ ) for @{ $self->{_queue} };
   $kernel->refcount_decrement( $_, __PACKAGE__ ) for keys %{ $self->{_refcounts} };
   delete $self->{_queue};
+
+  # remove delay for jobs if we set one
+  $kernel->alarm_remove( delete $self->{_delay} ) if exists $self->{_delay};
+
+  return;
+}
+
+sub _process_queue_delayed {
+  my ($kernel,$self) = @_[KERNEL,OBJECT];
+  delete $self->{_delay} if exists $self->{_delay};
+  $kernel->yield( '_process_queue', 'DELAYDONE' );
   return;
 }
 
 sub _process_queue {
-  my ($kernel,$self) = @_[KERNEL,OBJECT];
+  my ($kernel,$self,$delaydone) = @_[KERNEL,OBJECT,ARG0];
   return if $self->{_shutdown};
+  return if exists $self->{_delay};
   my ($job, $smoker );
   if ( $self->{_current} ) {
      return if $self->{_current}->{backend};
      $job = $self->{_current};
+
+     # do we have a delay between smokers?
+     if ( $job->{job}->delay > 0 and ! defined $delaydone and scalar @{ $job->{smokers} } > 0 ) {
+	# fire off an alarm for the next iteration
+	#warn "Setting delay(" . $job->{job}->delay . ") for smoker" if $ENV{PERL5_SMOKEBOX_DEBUG};
+	$self->{_delay} = $kernel->delay_set( '_process_queue_delayed' => $job->{job}->delay );
+	return;
+     }
+
      $smoker = shift @{ $job->{smokers} };
      unless ( $smoker ) {
 	# Reached the end send an event back to the original requestor
@@ -92,7 +114,15 @@ sub _process_queue {
 	   $kernel->refcount_decrement( $session, __PACKAGE__ );
 	   delete $self->{_refcounts}->{ $session };
 	}
-  	$kernel->yield( '_process_queue' );
+
+	# did we enable delay between jobs?
+	if ( $self->{delay} > 0 and scalar @{ $self->{_queue} } > 0 ) {
+	   # fire off an alarm for the next iteration
+	   #warn "Setting delay($self->{delay}) for job" if $ENV{PERL5_SMOKEBOX_DEBUG};
+	   $self->{_delay} = $kernel->delay_set( '_process_queue_delayed' => $self->{delay} );
+	} else {
+  	   $kernel->yield( '_process_queue' );
+	}
 	return;
      }
   }
@@ -368,6 +398,7 @@ Creates a new POE::Component::SmokeBox::JobQueue object. Takes a number of optio
 
   'alias', specify a POE::Kernel alias for the component;
   'options', a hashref of POE::Session options to pass to the poco's POE::Session;
+  'delay', the time in seconds to wait between job runs, default is 0;
 
 =back
 

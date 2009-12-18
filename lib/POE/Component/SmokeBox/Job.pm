@@ -18,6 +18,7 @@ sub new {
 	command => { allow => [ qw(check index smoke) ], default => 'check', },
 	module  => { defined => 1 },
 	no_log	=> { defined => 1, allow => qr/^(?:0|1)$/, default => 0, },
+	delay	=> { defined => 1, allow => qr/^\d+$/, default => 0, },
   };
 
   my $args = check( $tmpl, { @_ }, 1 ) or return;
@@ -34,6 +35,7 @@ sub new {
 	module  => sub { defined $_[0]; },
 	id	=> sub { defined $_[0]; },
 	no_log	=> qr/^(?:0|1)$/,
+	delay	=> qr/^\d+$/,
   };
   $self->mk_accessors( $accessor_map );
   $self->$_( $args->{$_} ) for keys %{ $args };
@@ -82,6 +84,7 @@ Creates a new POE::Component::SmokeBox::Job object. Takes a number of parameters
   'command', the command to run, 'check', 'index' or 'smoke', default is 'check';
   'module', the distribution to smoke, mandatory if command is 'smoke';
   'no_log', enable to not store the job output log, default is false;
+  'delay', the time in seconds to wait between smoker runs, default is 0;
 
 =back
 
@@ -114,6 +117,12 @@ The distribution to smoke, mandatory if command is C<'smoke'>.
 =item C<no_log>
 
 Boolean value determining whether the job will store it's STDERR/STDOUT log, default 0.
+
+=item C<delay>
+
+Number of seconds to pause between smokers for this job. Useful to "throttle" your smokers! The default is 0.
+
+WARNING: This option is ineffective if you have multiplicity set in SmokeBox.
 
 =item C<dump_data>
 

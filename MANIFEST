@@ -67,6 +67,7 @@ t/jobqueue/01_jobqueue.t
 t/jobqueue/02_smokers.t
 t/jobqueue/03_paused.t
 t/jobqueue/04_no_smokers.t
+t/jobqueue/05_delay.t
 t/smokebox/00_compile.t
 t/smokebox/01_usage.t
 t/smokebox/02_smokers.t
@@ -75,5 +76,7 @@ t/smokebox/04_smokers_more.t
 t/smokebox/05_multi_smoke.t
 t/smokebox/06_many_jobs.t
 t/smokebox/07_stress.t
+t/smokebox/08_delay.t
+t/smokebox/09_delay_delay.t
 t/zauth/99_pod.t
 t/zauth/99_pod_coverage.t
