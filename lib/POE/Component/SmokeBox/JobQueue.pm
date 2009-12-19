@@ -116,7 +116,8 @@ sub _process_queue {
 	}
 
 	# did we enable delay between jobs?
-	if ( $self->{delay} > 0 and scalar @{ $self->{_queue} } > 0 ) {
+	# don't check the queue, we force a delay all the time so if we add a job, we're already delaying for it...
+	if ( $self->{delay} > 0 ) {
 	   # fire off an alarm for the next iteration
 	   #warn "Setting delay($self->{delay}) for job" if $ENV{PERL5_SMOKEBOX_DEBUG};
 	   $self->{_delay} = $kernel->delay_set( '_process_queue_delayed' => $self->{delay} );
