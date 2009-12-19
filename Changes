@@ -1,6 +1,10 @@
 POE::Component::SmokeBox ChangeLog
 ==================================
 
+0.32  Sat Dec 19 20:52:50 GMT 2009
+  - added delay param to smokebox->new() and job->new() to 
+    enable throttling (apocal)
+
 0.30  Thu Dec  3 10:12:06 GMT 2009
   - Added no_log parameter to ::Job / ::Backend to conserve memory (apocal)
   - Fixed wheel close bug, thanks to devin@#poe! (apocal)
