@@ -166,6 +166,8 @@ sub _spawn_wheel {
 			'^PERL5_SMOKEBOX',
 			'^HARNESS_',
 			'^(PERL5LIB|TAP_VERSION|TEST_VERBOSE)$',
+      '^AUTHOR_TESTING$',
+      '^PERL_TEST',
   ] );
   my $type = 'POE::Wheel::Run';
   $type .= '::Win32' if $^O eq 'MSWin32';
