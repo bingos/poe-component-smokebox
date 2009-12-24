@@ -1,6 +1,10 @@
 POE::Component::SmokeBox ChangeLog
 ==================================
 
+0.34  Thu Dec 24 09:42:51 GMT 2009
+  - Scrub extra env vars from the spawned smoke processes
+    http://xrl.us/bgq4n8
+
 0.32  Sat Dec 19 20:52:50 GMT 2009
   - added delay param to smokebox->new() and job->new() to 
     enable throttling (apocal)
