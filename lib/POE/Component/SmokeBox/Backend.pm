@@ -247,7 +247,6 @@ sub _wheel_stderr {
   $self->{_wheel_time} = time();
   push @{ $self->{_wheel_log} }, $input if ! $self->{no_log};
   warn $input, "\n" if $self->{debug} or $ENV{PERL5_SMOKEBOX_DEBUG};
-  return if is_warning($input);
   if ( $self->_detect_loop( $input, 'stderr' ) ) {
     $self->{excess_kill} = 1;
     $poe_kernel->yield( '_wheel_kill', 'Killing current run due to detection of looping output' );
@@ -262,7 +261,7 @@ sub _detect_loop {
   return if $self->{_loop_detect};
   return if $input =~ /^\[(MSG|ERROR)\]/;
   my $digest = md5_hex( $input );
-  my $weighting = $handle eq 'stdout' ? 10 : 1;
+  my $weighting = ( $handle eq 'stderr' and is_warning($input) ) ? 1 : 10;
   $self->{_digests}->{ $digest } += $weighting;
   return unless ++$self->{_digests}->{ $digest } > 3000;
   return $self->{_loop_detect} = 1;
