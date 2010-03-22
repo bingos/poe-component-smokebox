@@ -6,7 +6,7 @@ use Params::Check qw(check);
 use base qw(Object::Accessor);
 use vars qw($VERSION $VERBOSE);
 
-$VERSION = '0.34';
+$VERSION = '0.36';
 
 sub new {
   my $package = shift;

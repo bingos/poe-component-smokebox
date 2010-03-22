@@ -1,6 +1,10 @@
 POE::Component::SmokeBox ChangeLog
 ==================================
 
+0.36  Mon Mar 22 22:54:58 GMT 2010
+  - Change the logic slightly for detecting loops in output
+    ( suggested by apocal ).
+
 0.34  Thu Dec 24 09:42:51 GMT 2009
   - Scrub extra env vars from the spawned smoke processes
     http://xrl.us/bgq4n8
