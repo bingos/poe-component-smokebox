@@ -62,6 +62,8 @@ t/backend/08_test_excess.t
 t/backend/09_test_loop.t
 t/backend/10_test_normal.t
 t/backend/11_test_nolog.t
+t/backend/12_test_callback.t
+t/backend/13_test_callback_deny.t
 t/jobqueue/00_compile.t
 t/jobqueue/01_jobqueue.t
 t/jobqueue/02_smokers.t

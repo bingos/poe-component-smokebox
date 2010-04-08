@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use File::Spec;
-use Test::More tests => 16;
+use Test::More tests => 17;
 use POE;
 use_ok('POE::Component::SmokeBox::Backend');
 
@@ -45,7 +45,7 @@ sub _results {
   ok( scalar @{ $result->{log} } > 1, 'The log contains something' );
   ok( $result->{module} eq $module, $module );
   ok( $result->{command} eq 'smoke', "We're smoking!" );
-  ok( ! exists $result->{$_}, "Did not find '$_'" ) for qw( idle_kill excess_kill term_kill );
+  ok( ! exists $result->{$_}, "Did not find '$_'" ) for qw( idle_kill excess_kill term_kill cb_kill );
   $kernel->delay( '_timeout' );
   return;
 }

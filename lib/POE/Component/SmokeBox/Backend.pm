@@ -145,6 +145,12 @@ sub _start {
   $kernel->refcount_increment( $sender_id, __PACKAGE__ );
   $self->{session} = $sender_id;
   $kernel->detach_myself() if $kernel != $sender;
+
+  $self->{_wheel_log} = [ ];
+  $self->{_digests} = { };
+  $self->{_loop_detect} = 0;
+  $self->{start_time} = time();
+
   $kernel->yield( '_spawn_wheel' );
   return;
 }
@@ -158,6 +164,19 @@ sub _shutdown {
 
 sub _spawn_wheel {
   my ($kernel,$self) = @_[KERNEL,OBJECT];
+
+  # do we need to process callbacks?
+  if ( $self->{do_callback} ) {
+    # Ask it if we should process this job or not?
+    unless ( $self->{do_callback}->( 'BEFORE', $self ) ) {
+      warn "Callback denied job, aborting!\n" if $self->{debug} or $ENV{PERL5_SMOKEBOX_DEBUG};
+      my $job = $self->_finalize_job( -1 );
+      $job->{cb_kill} = 1;
+      $kernel->post( $self->{session}, $self->{event}, $job );
+      return;
+    }
+  }
+
   # Set appropriate %ENV values before we fork()
   my $sanctify = Env::Sanctify->sanctify( 
 	env => $self->{env}, 
@@ -181,10 +200,7 @@ sub _spawn_wheel {
   );
   # Restore the %ENV values
   $sanctify->restore();
-  $self->{_wheel_log} = [ ];
-  $self->{_digests} = { };
-  $self->{_loop_detect} = 0;
-  $self->{start_time} = $self->{_wheel_time} = time();
+  $self->{_wheel_time} = time();
   $self->{PID} = $self->{wheel}->PID();
   $kernel->sig_child( $self->{PID}, '_sig_child' );
   $kernel->delay( '_wheel_idle', $self->{timer} ) unless $self->{command} eq 'index';
@@ -198,9 +214,25 @@ sub _sig_child {
   $kernel->sig_handled();
   $kernel->delay( '_wheel_idle' );
 
+  my $job = $self->_finalize_job( $status );
+
+  # do we need to process callbacks?
+  if ( $self->{do_callback} ) {
+    # Inform the callback that the job is done
+    $self->{do_callback}->( 'AFTER', $self, $job );
+  }
+
+  $kernel->post( $self->{session}, $self->{event}, $job );
+  return;
+}
+
+sub _finalize_job {
+  my( $self, $status ) = @_;
+
   $self->{end_time} = time();
   delete $self->{_digests};
   delete $self->{_loop_detect};
+
   my $job = { };
   $job->{status} = $status;
   $job->{log} = $self->{_wheel_log};
@@ -208,9 +240,9 @@ sub _sig_child {
   $job->{$_} = $self->{$_} for grep { $self->{$_} } qw(command env PID start_time end_time idle_kill excess_kill term_kill perl type);
   $job->{program} = $self->{program} if $self->{debug} or $ENV{PERL5_SMOKEBOX_DEBUG};
   $job->{module} = $self->{module} if $self->{command} eq 'smoke';
-  $kernel->post( $self->{session}, $self->{event}, $job );
-  $kernel->refcount_decrement( $self->{session}, __PACKAGE__ );
-  return;
+  $poe_kernel->refcount_decrement( $self->{session}, __PACKAGE__ );
+
+  return $job;
 }
 
 sub _wheel_error {
@@ -443,6 +475,7 @@ ARG0 of the C<event> specified in one of the constructors will be a hashref with
   'idle_kill', only present if the job was killed because of excessive idle;
   'excess_kill', only present if the job was killed due to excessive runtime;
   'term_kill', only present if the job was killed due to a poco shutdown event;
+  'cb_kill', only present if the job was killed due to the callback returning false;
 
 Plus any of the parameters given to one of the constructors, including arbitary ones.
 

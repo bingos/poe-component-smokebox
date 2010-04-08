@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use File::Spec;
-use Test::More tests => 17;
+use Test::More tests => 18;
 use POE;
 use_ok('POE::Component::SmokeBox::Backend');
 
@@ -42,7 +42,7 @@ sub _results {
   ok( ref $result->{log} eq 'ARRAY', 'The log entry is an arrayref' );
   ok( scalar @{ $result->{log} } > 1, 'The log contains something' );
   ok( $result->{command} eq 'check', "We're checking!" );
-  ok( ! exists $result->{$_}, "Did not find '$_'" ) for qw( idle_kill excess_kill term_kill );
+  ok( ! exists $result->{$_}, "Did not find '$_'" ) for qw( idle_kill excess_kill term_kill cb_kill );
   ok( defined $result->{env}->{PERL_POE_SOMETHING_WACKY}, 'Environment setting okay' );
   ok( !$ENV{PERL_POE_SOMETHING_WACKY}, 'No lingering ENV values' ) or diag($ENV{PERL_POE_SOMETHING_WACKY});
   $kernel->delay( '_timeout' );

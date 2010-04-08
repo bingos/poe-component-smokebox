@@ -500,6 +500,7 @@ Each result is a hashref:
   'idle_kill', only present if the job was killed because of excessive idle;
   'excess_kill', only present if the job was killed due to excessive runtime;
   'term_kill', only present if the job was killed due to a poco shutdown event;
+  'cb_kill', only present if the job was killed due to the callback returning false;
 
 =head1 AUTHOR
 

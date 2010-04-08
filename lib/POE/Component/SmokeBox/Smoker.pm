@@ -14,6 +14,7 @@ sub new {
   my $tmpl = {
 	perl => { defined => 1, required => 1 },
 	env  => { defined => 1, allow => [ sub { return 1 if ref $_[0] eq 'HASH'; } ], },
+	do_callback => { allow => sub { return 1 if ! defined $_[0] or ref $_[0] eq 'CODE'; }, },
   };
 
   my $args = check( $tmpl, { @_ }, 1 ) or return;
@@ -21,6 +22,7 @@ sub new {
   my $accessor_map = {
 	perl => sub { defined $_[0]; },
 	env  => sub { return 1 if ref $_[0] eq 'HASH'; }, 
+	do_callback => sub { return 1 if ! defined $_[0] or ref $_[0] eq 'CODE' },
   };
   $self->mk_accessors( $accessor_map );
   $self->$_( $args->{$_} ) for keys %{ $args };
@@ -30,7 +32,9 @@ sub new {
 sub dump_data {
   my $self = shift;
   my @returns = qw(perl);
-  push @returns, 'env' if defined $self->env();
+  foreach my $data ( qw( env do_callback ) ) {
+    push @returns, $data if defined $self->$data;
+  }
   return map { ( $_ => $self->$_ ) } @returns;
 }
 
@@ -64,10 +68,11 @@ the path to a C<perl> executable that is configured for CPAN Testing and its ass
 
 =item C<new>
 
-Creates a new POE::Component::SmokeBox::Smoker object. Takes two parameters:
+Creates a new POE::Component::SmokeBox::Smoker object. Takes some parameters:
 
   'perl', the path to a suitable perl executable, (required);
   'env', a hashref containing %ENV type environment variables;
+  'do_callback', a callback to be triggered before+after smoking a job;
 
 =back
 
@@ -82,6 +87,59 @@ Returns the C<perl> executable path that was set.
 =item C<env>
 
 Returns the hashref of %ENV settings, if applicable.
+
+=item C<do_callback>
+
+Using this enables the callback mode. USE WITH CAUTION!
+
+You need to pass a subref to enable it, and a undef value to disable it. A typical subref would be one you get from POE:
+
+	POE::Component::SmokeBox::Smoker->new(
+		'do_callback'	=> $_[SESSION]->callback( 'my_callback', @args ),
+		'perl'		=> $^X,
+	);
+
+Again, it is worth reminding you that you need to read L<POE::Session> for the exact semantics of callbacks in POE. You do not need
+to supply POE callbacks, any plain subref will do.
+
+	POE::Component::SmokeBox::Smoker->new(
+		'do_callback'	=> \&my_callback,
+		'perl'		=> $^X,
+	);
+
+The callback will be executed before+after this smoker object processes a job. In the "BEFORE" phase, you can return a true/false
+value to control SmokeBox's actions. If a false value is returned, the smoker will NOT execute the job. It will simply submit the
+result as usual, but with some "twists" to the result. The result will have a status of "-1" to signify it didn't run and the "cb_kill"
+key will be set to 1. In the "AFTER" phase, the return value doesn't matter because the job is done.
+
+Before a job, the callback will get the data shown. ( $self is a L<POE::Component::SmokeBox::Backend> object! )
+
+	$callback->( 'BEFORE', $self );
+
+After a job, the callback will get the data shown. ( $result is the result hashref you would get from SmokeBox normally )
+
+	$callback->( 'AFTER', $self, $result );
+
+The normal flow for a job would be something like this:
+
+	* submit job to SmokeBox from your session
+	* SmokeBox gets ready to process job
+	* callback executed with BEFORE
+	* SmokeBox processes job
+	* callback executed with AFTER
+	* SmokeBox submits results to your session
+
+Now, if you have N smokers, it would look like this:
+
+	* submit job to SmokeBox from your session
+	* SmokeBox gets ready to process job
+	* callback executed with BEFORE ( for smoker 1 )
+	* SmokeBox processes job ( for smoker 1 )
+	* callback executed with AFTER ( for smoker 1 )
+	* callback executed with BEFORE ( for smoker N+1 )
+	* SmokeBox processes job ( for smoker N+1 )
+	* callback executed with AFTER ( for smoker N+1 )
+	* SmokeBox submits results to your session
 
 =item C<dump_data>
 

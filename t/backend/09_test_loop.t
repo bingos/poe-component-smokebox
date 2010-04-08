@@ -1,13 +1,13 @@
 use strict;
 use warnings;
 use File::Spec;
-use Test::More; # tests => 16;
+use Test::More;
 
 BEGIN {
     plan skip_all => 'Currently broken on Solaris, skipping' if $^O eq 'solaris';
 }
 
-plan tests => 16;
+plan tests => 17;
 
 use POE;
 use_ok('POE::Component::SmokeBox::Backend');
@@ -54,7 +54,7 @@ sub _results {
   ok( $result->{module} eq $module, $module );
   ok( $result->{command} eq 'smoke', "We're smoking!" );
   ok( $result->{excess_kill}, 'We got killed due to loop' );
-  ok( ! exists $result->{$_}, "Did not find '$_'" ) for qw( idle_kill term_kill );
+  ok( ! exists $result->{$_}, "Did not find '$_'" ) for qw( idle_kill term_kill cb_kill );
   $kernel->delay( '_timeout' );
   return;
 }

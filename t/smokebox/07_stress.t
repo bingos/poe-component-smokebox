@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use File::Spec;
-use Test::More; # tests => 472;
+use Test::More;
 use POE qw(Component::SmokeBox::Smoker Component::SmokeBox::Job);
 
 my $jobs = 25;
