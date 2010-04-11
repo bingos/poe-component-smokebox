@@ -19,7 +19,7 @@ requires 'Env::Sanctify' => 0.04;
 requires 'String::Perl::Warnings' => 0.04;
 githubmeta;
 unless ( win32 ) {
-  if ( can_use 'IO::Pty' ) {
+  if ( ! can_use 'IO::Pty' ) {
     requires 'IO::Pty' => 0 if
        prompt( 'Do you want to install IO::Pty, it is highly recommended that you do [Y/n]?', 'Y' )
          =~ /^Y/i;
