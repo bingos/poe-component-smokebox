@@ -14,7 +14,7 @@ sub new {
   my $tmpl = {
 	perl => { defined => 1, required => 1 },
 	env  => { defined => 1, allow => [ sub { return 1 if ref $_[0] eq 'HASH'; } ], },
-	do_callback => { allow => sub { return 1 if ! defined $_[0] or ref $_[0] eq 'CODE'; }, },
+	do_callback => { allow => sub { return 1 if ! defined $_[0] or $_[0]->isa( 'CODE' ); }, },
   };
 
   my $args = check( $tmpl, { @_ }, 1 ) or return;
@@ -22,7 +22,7 @@ sub new {
   my $accessor_map = {
 	perl => sub { defined $_[0]; },
 	env  => sub { return 1 if ref $_[0] eq 'HASH'; }, 
-	do_callback => sub { return 1 if ! defined $_[0] or ref $_[0] eq 'CODE' },
+	do_callback => sub { return 1 if ! defined $_[0] or $_[0]->isa( 'CODE' ) },
   };
   $self->mk_accessors( $accessor_map );
   $self->$_( $args->{$_} ) for keys %{ $args };
