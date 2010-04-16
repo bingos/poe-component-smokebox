@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp;
 use Storable;
-use POE qw(Wheel::Run);
+use POE qw(Wheel::Run Filter::Line);
 use Digest::MD5 qw(md5_hex);
 use Env::Sanctify;
 use String::Perl::Warnings qw(is_warning);
@@ -194,6 +194,8 @@ sub _spawn_wheel {
     Program     => $self->{program},
     StdoutEvent => '_wheel_stdout',
     StderrEvent => '_wheel_stderr',
+    StdoutFilter => POE::Filter::Line->new( InputLiteral => "\n" ),
+    StderrFilter => POE::Filter::Line->new( InputLiteral => "\n" ),
     ErrorEvent  => '_wheel_error',
     CloseEvent  => '_wheel_closed',
     ( $GOT_PTY ? ( Conduit => 'pty-pipe' ) : () ),

@@ -1,6 +1,9 @@
 POE::Component::SmokeBox ChangeLog
 ==================================
 
+0.38  Fri Apr 16 20:56:40 BST 2010
+  - Explicitly use the \n InputLiteral in Backend's PWR
+
 0.36  Mon Mar 22 22:54:58 GMT 2010
   - Change the logic slightly for detecting loops in output
     ( suggested by apocal ).
