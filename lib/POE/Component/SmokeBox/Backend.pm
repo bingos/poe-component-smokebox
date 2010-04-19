@@ -7,7 +7,6 @@ use Storable;
 use POE qw(Wheel::Run Filter::Line);
 use Digest::MD5 qw(md5_hex);
 use Env::Sanctify;
-use String::Perl::Warnings qw(is_warning);
 use Module::Pluggable search_path => 'POE::Component::SmokeBox::Backend', sub_name => 'backends', except => 'POE::Component::SmokeBox::Backend::Base';
 use vars qw($VERSION);
 
@@ -68,6 +67,12 @@ sub spawn {
   $opts{command} = 'check' unless grep { $_ eq $opts{command} } @cmds;
   $opts{perl} = $^X unless $opts{perl}; # and -e $opts{perl};
   $opts{no_log} = 0 unless $opts{no_log};
+  $opts{check_warnings} = 1 unless exists $opts{check_warnings};
+
+  if ( $opts{check_warnings} ) {
+     require String::Perl::Warnings;
+  }
+
   if ( $opts{command} eq 'smoke' and !$opts{module} ) {
      carp "You must specify a 'module' with 'smoke'\n";
      return;
@@ -295,7 +300,14 @@ sub _detect_loop {
   return if $self->{_loop_detect};
   return if $input =~ /^\[(MSG|ERROR)\]/;
   my $digest = md5_hex( $input );
-  my $weighting = ( $handle eq 'stderr' and is_warning($input) ) ? 1 : 10;
+
+  my $weighting;
+  if ( $self->{check_warnings} ) {
+    $weighting = ( $handle eq 'stderr' and String::Perl::Warnings::is_warning($input) ) ? 1 : 10;
+  } else {
+    $weighting = $handle eq 'stderr' ? 1 : 10;
+  }
+
   $self->{_digests}->{ $digest } += $weighting;
   return unless ++$self->{_digests}->{ $digest } > 3000;
   return $self->{_loop_detect} = 1;

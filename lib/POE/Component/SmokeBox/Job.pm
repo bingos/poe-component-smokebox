@@ -19,6 +19,7 @@ sub new {
 	module  => { defined => 1 },
 	no_log	=> { defined => 1, allow => qr/^(?:0|1)$/, default => 0, },
 	delay	=> { defined => 1, allow => qr/^\d+$/, default => 0, },
+	check_warnings => { defined => 1, allow => qr/^(?:0|1)$/, default => 1, },
   };
 
   my $args = check( $tmpl, { @_ }, 1 ) or return;
@@ -36,6 +37,7 @@ sub new {
 	id	=> sub { defined $_[0]; },
 	no_log	=> qr/^(?:0|1)$/,
 	delay	=> qr/^\d+$/,
+	check_warnings => qr/^(?:0|1)$/,
   };
   $self->mk_accessors( $accessor_map );
   $self->$_( $args->{$_} ) for keys %{ $args };
@@ -44,7 +46,7 @@ sub new {
 
 sub dump_data {
   my $self = shift;
-  my @returns = qw(idle timeout type command no_log);
+  my @returns = qw(idle timeout type command no_log check_warnings);
   push @returns, 'module' if $self->command() eq 'smoke';
   return map { ( $_ => $self->$_ ) } @returns;
 }
@@ -85,6 +87,7 @@ Creates a new POE::Component::SmokeBox::Job object. Takes a number of parameters
   'module', the distribution to smoke, mandatory if command is 'smoke';
   'no_log', enable to not store the job output log, default is false;
   'delay', the time in seconds to wait between smoker runs, default is 0;
+  'check_warnings', enable to check job output for common perl warning strings, default is 1;
 
 =back
 
@@ -123,6 +126,13 @@ Boolean value determining whether the job will store it's STDERR/STDOUT log, def
 Number of seconds to pause between smokers for this job. Useful to "throttle" your smokers! The default is 0.
 
 WARNING: This option is ineffective if you have multiplicity set in SmokeBox.
+
+=item C<check_warnings>
+
+Boolean value determining whether SmokeBox will use L<String::Perl::Warnings> to check job output for common perl warnings.
+
+If enabled, SmokeBox will not kill a job prematurely if it prints a lot of warnings to STDERR. It will run the additional check
+for the warnings and give the process more time to reach the limit. ( look at L<POE::Component::SmokeBox::Backend> for 'excess_kill' )
 
 =item C<dump_data>
 
