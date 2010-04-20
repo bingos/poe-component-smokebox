@@ -28,6 +28,21 @@ BEGIN {
         };
 	if ( $^O eq 'MSWin32' ) {
 		require POE::Wheel::Run::Win32;
+
+		# MSWin32: Disable critical error popups
+		# Thanks to https://rt.cpan.org/Public/Bug/Display.html?id=56547
+
+		# Call kernel32.SetErrorMode(SEM_FAILCRITICALERRORS):
+		# "The system does not display the critical-error-handler message box.
+		# Instead, the system sends the error to the calling process." and
+		# "A child process inherits the error mode of its parent process."
+		if ( eval { require Win32API::File } ) {
+			Win32API::File->import( qw( SetErrorMode SEM_FAILCRITICALERRORS SEM_NOGPFAULTERRORBOX ) );
+			SetErrorMode( SEM_FAILCRITICALERRORS() | SEM_NOGPFAULTERRORBOX() );
+		} else {
+			warn "Unable to use Win32API::File -> $@";
+			warn 'This means sometimes perl.exe will popup a dialog box... Annoying!';
+		}
 	}
 }
 

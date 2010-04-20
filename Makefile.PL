@@ -30,6 +30,7 @@ unless ( win32 ) {
 }
 else {
   requires 'POE::Wheel::Run::Win32' => 0.10;
+  requires 'Win32API::File' => 0;
 }
 
 tests 't/*.t t/*/*.t';
