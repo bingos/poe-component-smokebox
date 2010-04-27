@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 17;
+use Test::More tests => 20;
 use_ok('POE::Component::SmokeBox::Smoker');
 use_ok('POE::Component::SmokeBox::Job');
 use_ok('POE::Component::SmokeBox::Result');
@@ -9,6 +9,12 @@ my $smoker = POE::Component::SmokeBox::Smoker->new( perl => $^X );
 
 ok( $smoker->perl() eq $^X, 'The smoker perl was okay' );
 ok( !$smoker->env(), 'We didn\'t set an env' );
+ok( !$smoker->name(), 'We didn\'t set a name' );
+
+$smoker = POE::Component::SmokeBox::Smoker->new( perl => $^X, name => 1 );
+ok( $smoker->name(), 'We set a name' );
+$smoker = POE::Component::SmokeBox::Smoker->new( perl => $^X, name => { 'foo' => 'baz' } );
+ok( $smoker->name(), 'We set a name' );
 
 my %sdump = $smoker->dump_data();
 

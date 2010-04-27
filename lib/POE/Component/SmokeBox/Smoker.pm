@@ -15,6 +15,7 @@ sub new {
 	perl => { defined => 1, required => 1 },
 	env  => { defined => 1, allow => [ sub { return 1 if ref $_[0] eq 'HASH'; } ], },
 	do_callback => { allow => sub { return 1 if ! defined $_[0] or $_[0]->isa( 'CODE' ); }, },
+	name => { allow => sub { return 1; }, },
   };
 
   my $args = check( $tmpl, { @_ }, 1 ) or return;
@@ -23,6 +24,7 @@ sub new {
 	perl => sub { defined $_[0]; },
 	env  => sub { return 1 if ref $_[0] eq 'HASH'; }, 
 	do_callback => sub { return 1 if ! defined $_[0] or $_[0]->isa( 'CODE' ) },
+	name => sub { return 1; },
   };
   $self->mk_accessors( $accessor_map );
   $self->$_( $args->{$_} ) for keys %{ $args };
@@ -73,6 +75,7 @@ Creates a new POE::Component::SmokeBox::Smoker object. Takes some parameters:
   'perl', the path to a suitable perl executable, (required);
   'env', a hashref containing %ENV type environment variables;
   'do_callback', a callback to be triggered before+after smoking a job;
+  'name', anything you want to attach to the smoker for informative purposes;
 
 =back
 
