@@ -10,7 +10,7 @@ use Env::Sanctify;
 use Module::Pluggable search_path => 'POE::Component::SmokeBox::Backend', sub_name => 'backends', except => 'POE::Component::SmokeBox::Backend::Base';
 use vars qw($VERSION);
 
-$VERSION = '0.38';
+$VERSION = '0.40';
 
 my $GOT_KILLFAM;
 my $GOT_PTY;
