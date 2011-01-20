@@ -89,6 +89,7 @@ sub _process_queue {
   my ($kernel,$self,$delaydone) = @_[KERNEL,OBJECT,ARG0];
   return if $self->{_shutdown};
   return if exists $self->{_delay};
+  return if exists $self->{paused} and $self->{paused} == 2;
   my ($job, $smoker );
   if ( $self->{_current} ) {
      return if $self->{_current}->{backend};
@@ -301,6 +302,11 @@ sub pause_queue {
   $self->{paused} = 1;
 }
 
+sub pause_queue_now {
+  my $self = CORE::shift;
+  $self->{paused} = 2;
+}
+
 sub resume_queue {
   my $self = CORE::shift;
   delete $self->{paused};
@@ -308,7 +314,11 @@ sub resume_queue {
 }
 
 sub queue_paused {
-  return $_[0]->{paused};
+  if ( exists $_[0]->{paused} ) {
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 sub current_job {
@@ -464,6 +474,10 @@ Returns a hashref to the currently processing job, if there is one, undef otherw
 
 Pauses the jobqueue. Any currently processing jobs will be completed, but nothing else will be processed until the
 queue is resumed.
+
+=item C<pause_queue_now>
+
+Same as C<pause_queue> but also halts any currently processing job.
 
 =item C<resume_queue>
 
