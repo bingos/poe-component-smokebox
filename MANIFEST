@@ -68,6 +68,8 @@ t/jobqueue/00_compile.t
 t/jobqueue/01_jobqueue.t
 t/jobqueue/02_smokers.t
 t/jobqueue/03_paused.t
+t/jobqueue/03_paused_now.t
+t/jobqueue/03_paused_between.t
 t/jobqueue/04_no_smokers.t
 t/jobqueue/05_delay.t
 t/smokebox/00_compile.t
