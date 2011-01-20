@@ -84,3 +84,4 @@ t/smokebox/08_delay.t
 t/smokebox/09_delay_delay.t
 t/zauth/99_pod.t
 t/zauth/99_pod_coverage.t
+tools/git-log.pl

@@ -17,6 +17,7 @@ requires 'Object::Accessor' => 0;
 requires 'Digest::MD5' => 0;
 requires 'Env::Sanctify' => 0.04;
 requires 'String::Perl::Warnings' => 0.04;
+makemaker_args(dist => { PREOP => "$^X ./tools/git-log.pl > ./Changes" });
 githubmeta;
 unless ( win32 ) {
   if ( ! can_use 'IO::Pty' ) {
