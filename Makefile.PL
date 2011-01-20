@@ -35,25 +35,4 @@ else {
 }
 
 tests 't/*.t t/*/*.t';
-
-print <<NOTICE;
-
-\a--------------------------------------------------------------
-Hi,
-
-This is an early release of POE::Component::SmokeBox.
-
-Thanks for your interest.
-
-There may still be stuff wrong with it, but it should be
-usable. Enjoy.
-
-Any bug reports, feature requests, send an email to 
-<bug-POE-Component-SmokeBox\@rt.cpan.org>
-
---------------------------------------------------------------
-
-NOTICE
-
-sleep(5);
 WriteAll();
