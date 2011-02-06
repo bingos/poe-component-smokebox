@@ -4,8 +4,8 @@ use strict;
 use warnings;
 use Carp;
 use Storable;
-use POE qw(Wheel::Run Filter::Line);
-use Digest::MD5 qw(md5_hex);
+use POE qw[Wheel::Run Filter::Line];
+use Digest::SHA qw[sha256];
 use Env::Sanctify;
 use Module::Pluggable search_path => 'POE::Component::SmokeBox::Backend', sub_name => 'backends', except => 'POE::Component::SmokeBox::Backend::Base';
 use vars qw($VERSION);
@@ -314,7 +314,7 @@ sub _detect_loop {
   my $handle = shift || 'stdout';
   return if $self->{_loop_detect};
   return if $input =~ /^\[(MSG|ERROR)\]/;
-  my $digest = md5_hex( $input );
+  my $digest = sha256( $input );
 
   my $weighting;
   if ( $self->{check_warnings} ) {

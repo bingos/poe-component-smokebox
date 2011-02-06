@@ -14,7 +14,7 @@ requires 'POE' => 1.0001;
 requires 'Module::Pluggable' => 0;
 requires 'Params::Check' => 0;
 requires 'Object::Accessor' => 0;
-requires 'Digest::MD5' => 0;
+requires 'Digest::SHA' => 0;
 requires 'Env::Sanctify' => 0.04;
 requires 'String::Perl::Warnings' => 0.04;
 makemaker_args(dist => { PREOP => "$^X ./tools/git-log.pl > ./Changes" });
