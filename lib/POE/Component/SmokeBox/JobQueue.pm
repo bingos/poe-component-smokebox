@@ -6,7 +6,7 @@ use POE qw(Component::SmokeBox::Backend Component::SmokeBox::Job Component::Smok
 use Params::Check qw(check);
 use vars qw($VERSION);
 
-$VERSION = '0.40';
+$VERSION = '0.42';
 
 # Stolen from POE::Wheel. This is static data, shared by all
 my $current_id = 0;
