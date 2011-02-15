@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use vars qw($VERSION);
 
-$VERSION = '0.43_01';
+$VERSION = '0.44';
 
 sub new {
   my $package = shift;
