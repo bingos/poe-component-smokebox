@@ -4,8 +4,8 @@ use strict;
 use warnings;
 use Carp;
 use Storable;
-use File::Temp qw[tempdir];
-use File::Path;
+use File::Temp ();
+use File::Path qw[rmtree];
 use File::Spec;
 use POSIX qw( O_CREAT O_RDWR O_RDONLY );         # for SDBM_File
 use SDBM_File;
@@ -173,12 +173,8 @@ sub _start {
 
   $self->{_wheel_log} = [ ];
 
-  {
-    $self->{_tempdir} = File::Temp->newdir();
-    my $file = File::Spec->catfile( $self->{_tempdir}->dirname, 'digests.dat' );
-    $self->{_digests} = { };
-    tie %{ $self->{_digests} }, 'SDBM_File', $file, O_CREAT|O_RDWR, 0644 or die "Could not tie: $!\n";
-  }
+  $self->_tie_digests();
+
   $self->{_loop_detect} = 0;
   $self->{start_time} = time();
 
@@ -188,9 +184,33 @@ sub _start {
 
 sub _shutdown {
   my ($kernel,$self) = @_[KERNEL,OBJECT];
+  $self->_untie_digests();
   $self->{term_kill} = 1;
   $kernel->yield( '_wheel_kill', 'Killing current due to component shutdown event' );
   return;
+}
+
+# Digests tie and untie
+
+sub _tie_digests {
+  my $self = shift;
+  $self->{_tempdir} = File::Temp->newdir();
+  $self->{_tmpdirname} = $self->{_tempdir}->dirname;
+  my $file = File::Spec->catfile( $self->{_tmpdirname}, 'digests.dat' );
+  $self->{_digests} = { };
+  tie %{ $self->{_digests} }, 'SDBM_File', $file, O_CREAT|O_RDWR, 0644 or die "Could not tie: $!\n";
+  return 1;
+}
+
+sub _untie_digests {
+  my $self = shift;
+  if ( $self->{_digests} ) {
+    untie %{ $self->{_digests} };
+    delete $self->{_digests};
+    delete $self->{_tempdir};
+    rmtree( $self->{_tmpdirname} ) if -d $self->{_tmpdirname};
+  }
+  return 1;
 }
 
 sub _spawn_wheel {
@@ -263,11 +283,9 @@ sub _finalize_job {
   my( $self, $status ) = @_;
 
   $self->{end_time} = time();
-  untie %{ $self->{_digests} };
-  delete $self->{_digests};
-  my $tempdir = $self->{_tempdir}->dirname();
-  delete $self->{_tempdir};
-  rmtree( $tempdir );
+
+  $self->_untie_digests();
+
   delete $self->{_loop_detect};
 
   my $job = { };
