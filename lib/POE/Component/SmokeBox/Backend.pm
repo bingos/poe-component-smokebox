@@ -4,6 +4,11 @@ use strict;
 use warnings;
 use Carp;
 use Storable;
+use File::Temp qw[tempdir];
+use File::Path;
+use File::Spec;
+use POSIX qw( O_CREAT O_RDWR O_RDONLY );         # for SDBM_File
+use SDBM_File;
 use POE qw[Wheel::Run Filter::Line];
 use Digest::SHA qw[sha256];
 use Env::Sanctify;
@@ -167,7 +172,13 @@ sub _start {
   $kernel->detach_myself() if $kernel != $sender;
 
   $self->{_wheel_log} = [ ];
-  $self->{_digests} = { };
+
+  {
+    $self->{_tempdir} = File::Temp->newdir();
+    my $file = File::Spec->catfile( $self->{_tempdir}->dirname, 'digests.dat' );
+    $self->{_digests} = { };
+    tie %{ $self->{_digests} }, 'SDBM_File', $file, O_CREAT|O_RDWR, 0644 or die "Could not tie: $!\n";
+  }
   $self->{_loop_detect} = 0;
   $self->{start_time} = time();
 
@@ -252,7 +263,11 @@ sub _finalize_job {
   my( $self, $status ) = @_;
 
   $self->{end_time} = time();
+  untie %{ $self->{_digests} };
   delete $self->{_digests};
+  my $tempdir = $self->{_tempdir}->dirname();
+  delete $self->{_tempdir};
+  rmtree( $tempdir );
   delete $self->{_loop_detect};
 
   my $job = { };
@@ -323,7 +338,12 @@ sub _detect_loop {
     $weighting = $handle eq 'stderr' ? 1 : 10;
   }
 
-  $self->{_digests}->{ $digest } += $weighting;
+  if ( exists $self->{_digests}->{ $digest } ) {
+    $self->{_digests}->{ $digest } += $weighting;
+  }
+  else {
+    $self->{_digests}->{ $digest } = $weighting;
+  }
   return unless ++$self->{_digests}->{ $digest } > 3000;
   return $self->{_loop_detect} = 1;
 }
