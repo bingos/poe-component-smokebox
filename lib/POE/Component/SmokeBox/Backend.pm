@@ -10,7 +10,7 @@ use File::Spec;
 use POSIX qw( O_CREAT O_RDWR O_RDONLY );         # for SDBM_File
 use SDBM_File;
 use POE qw[Wheel::Run Filter::Line];
-use Digest::SHA qw[sha256];
+use Digest::SHA qw[sha256_hex];
 use Env::Sanctify;
 use Module::Pluggable search_path => 'POE::Component::SmokeBox::Backend', sub_name => 'backends', except => 'POE::Component::SmokeBox::Backend::Base';
 use vars qw($VERSION);
@@ -333,7 +333,14 @@ sub _wheel_stderr {
   return if $self->{_killed};
   $self->{_wheel_time} = time();
   push @{ $self->{_wheel_log} }, $input if ! $self->{no_log};
-  warn $input, "\n" if $self->{debug} or $ENV{PERL5_SMOKEBOX_DEBUG};
+  if ( $self->{debug} or $ENV{PERL5_SMOKEBOX_DEBUG} ) {
+    if ( length( $input ) > 5000 ) {
+      warn "[SUPPRESSED OUTPUT > 5000]\n";
+    }
+    else {
+      warn $input, "\n";
+    }
+  }
   if ( $self->_detect_loop( $input, 'stderr' ) ) {
     $self->{excess_kill} = 1;
     $poe_kernel->yield( '_wheel_kill', 'Killing current run due to detection of looping output' );
@@ -347,10 +354,10 @@ sub _detect_loop {
   my $handle = shift || 'stdout';
   return if $self->{_loop_detect};
   return if $input =~ /^\[(MSG|ERROR)\]/;
-  my $digest = sha256( $input );
+  my $digest = sha256_hex( $input );
 
   my $weighting;
-  if ( $self->{check_warnings} ) {
+  if ( $self->{check_warnings} and length( $input ) <= 5000 ) {
     $weighting = ( $handle eq 'stderr' and String::Perl::Warnings::is_warning($input) ) ? 1 : 10;
   } else {
     $weighting = $handle eq 'stderr' ? 1 : 10;
