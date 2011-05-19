@@ -16,7 +16,7 @@ ok( scalar $smokebox->queues() == 1, 'There is one jobqueue' );
 ok( $smokebox->delay() == 1, 'Delay is enabled' );
 
 POE::Session->create(
-  package_states => [ 
+  package_states => [
     'main' => [qw(_start _stop _results _time_out)],
   ],
   options => { trace => 0 },

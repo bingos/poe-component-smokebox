@@ -6,7 +6,7 @@ use Params::Check qw(check);
 use base qw(Object::Accessor);
 use vars qw($VERSION $VERBOSE);
 
-$VERSION = '0.46';
+$VERSION = '0.48';
 
 sub new {
   my $package = shift;
@@ -22,7 +22,7 @@ sub new {
   my $self = bless { }, $package;
   my $accessor_map = {
 	perl => sub { defined $_[0]; },
-	env  => sub { return 1 if ref $_[0] eq 'HASH'; }, 
+	env  => sub { return 1 if ref $_[0] eq 'HASH'; },
 	do_callback => sub { return 1 if ! defined $_[0] or $_[0]->isa( 'CODE' ) },
 	name => sub { return 1; },
   };
@@ -52,7 +52,7 @@ POE::Component::SmokeBox::Smoker - encapsulates a smoker object.
   use POE::Component::SmokeBox::Smoker;
 
   my $smoker = POE::Component::SmokeBox::Smoker->new(
-	perl => '/home/foo/perl-5.10.0/bin/perl', 
+	perl => '/home/foo/perl-5.10.0/bin/perl',
 	env  => { APPDATA => '/home/foo/perl-5.10.0/', },
   );
 

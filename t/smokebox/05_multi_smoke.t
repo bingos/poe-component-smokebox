@@ -18,7 +18,7 @@ ok( $smokebox->multiplicity(), 'Multiplicity is on' );
 ok( scalar $smokebox->queues() == 5, 'There are five jobqueues' );
 
 POE::Session->create(
-  package_states => [ 
+  package_states => [
     'main' => [qw(_start _stop _results _terminate)],
   ],
   options => { trace => 0 },

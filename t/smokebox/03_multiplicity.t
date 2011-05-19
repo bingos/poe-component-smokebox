@@ -10,7 +10,7 @@ isa_ok( $smokebox, 'POE::Component::SmokeBox' );
 ok( $smokebox->multiplicity(), 'Multiplicity is on' );
 
 POE::Session->create(
-  package_states => [ 
+  package_states => [
     'main' => [qw(_start _stop _results _terminate)],
   ],
   options => { trace => 0 },

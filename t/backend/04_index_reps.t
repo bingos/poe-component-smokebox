@@ -20,10 +20,10 @@ exit 0;
 
 sub _start {
   my ($kernel,$heap) = @_[KERNEL,HEAP];
-  my $backend = POE::Component::SmokeBox::Backend->index( 
+  my $backend = POE::Component::SmokeBox::Backend->index(
 	type => 'CPAN::Reporter::Smoker',
-	event => '_results', 
-	perl => $perl, 
+	event => '_results',
+	perl => $perl,
 	debug => 0,
   );
   isa_ok( $backend, 'POE::Component::SmokeBox::Backend' );

@@ -15,7 +15,7 @@ isa_ok( $smokebox, 'POE::Component::SmokeBox' );
 ok( scalar $smokebox->queues() == 1, 'There is one jobqueue' );
 
 POE::Session->create(
-  package_states => [ 
+  package_states => [
     'main' => [qw(_start _stop _results _time_out)],
   ],
   options => { trace => 0 },

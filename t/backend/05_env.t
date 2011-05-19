@@ -20,9 +20,9 @@ exit 0;
 
 sub _start {
   my ($kernel,$heap) = @_[KERNEL,HEAP];
-  $heap->{backend} = POE::Component::SmokeBox::Backend->check( 
-	event => '_results', 
-	perl => $perl, 
+  $heap->{backend} = POE::Component::SmokeBox::Backend->check(
+	event => '_results',
+	perl => $perl,
 	debug => 0,
 	env => { 'PERL_POE_SOMETHING_WACKY', 'moooooooooo!' },
   );

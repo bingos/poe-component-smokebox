@@ -15,7 +15,7 @@ use Env::Sanctify;
 use Module::Pluggable search_path => 'POE::Component::SmokeBox::Backend', sub_name => 'backends', except => 'POE::Component::SmokeBox::Backend::Base';
 use vars qw($VERSION);
 
-$VERSION = '0.46';
+$VERSION = '0.48';
 
 my $GOT_KILLFAM;
 my $GOT_PTY;
@@ -230,8 +230,8 @@ sub _spawn_wheel {
   }
 
   # Set appropriate %ENV values before we fork()
-  my $sanctify = Env::Sanctify->sanctify( 
-	env => $self->{env}, 
+  my $sanctify = Env::Sanctify->sanctify(
+	env => $self->{env},
 	sanctify => [
 			'^POE_',
 			'^PERL5_SMOKEBOX',
@@ -476,9 +476,9 @@ POE::Component::SmokeBox::Backend - smoker backend to POE::Component::SmokeBox
 POE::Component::SmokeBox::Backend is the smoker backend to L<POE::Component::SmokeBox::JobQueue> and
 ultimately L<POE::Component::SmokeBox>.
 
-It takes a processes a single CPAN distribution against a given C<perl> executable using a 
+It takes a processes a single CPAN distribution against a given C<perl> executable using a
 configurable backend type ( currently, L<CPAN::YACSmoke>, L<CPANPLUS::YACSmoke> or L<CPAN::Reporter> ),
-monitors the process for idle ( ie. no output ) or excess runtime, and returns the results to the 
+monitors the process for idle ( ie. no output ) or excess runtime, and returns the results to the
 requesting L<POE::Session>.
 
 =head1 CONSTRUCTOR
@@ -565,7 +565,7 @@ Plus any of the parameters given to one of the constructors, including arbitary 
 
 =head1 ENVIRONMENT
 
-Setting the environment variable C<PERL5_SMOKEBOX_DEBUG> will cause the component to spew out lots of 
+Setting the environment variable C<PERL5_SMOKEBOX_DEBUG> will cause the component to spew out lots of
 information on STDERR.
 
 =head1 AUTHOR

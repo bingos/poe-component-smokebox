@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use vars qw($VERSION);
 
-$VERSION = '0.46';
+$VERSION = '0.48';
 
 sub new {
   my $package = shift;
@@ -31,7 +31,7 @@ POE::Component::SmokeBox::Result - object defining SmokeBox job results.
 
 =head1 DESCRIPTION
 
-POE::Component::SmokeBox::Result is a class encapsulating the job results that are returned by 
+POE::Component::SmokeBox::Result is a class encapsulating the job results that are returned by
 L<POE::Component::SmokeBox::Backend> and L<POE::Component::SmokeBox>.
 
 =head1 CONSTRUCTOR

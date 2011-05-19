@@ -19,10 +19,10 @@ exit 0;
 
 sub _start {
   my ($kernel,$heap) = @_[KERNEL,HEAP];
-  my $backend = POE::Component::SmokeBox::Backend->smoke( 
+  my $backend = POE::Component::SmokeBox::Backend->smoke(
 	type => 'Test::Idle',
-	event => '_results', 
-	perl => $perl, 
+	event => '_results',
+	perl => $perl,
 	module => $module,
 	idle => 10,
 	timer => 15,

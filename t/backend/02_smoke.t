@@ -21,9 +21,9 @@ exit 0;
 
 sub _start {
   my ($kernel,$heap) = @_[KERNEL,HEAP];
-  my $backend = POE::Component::SmokeBox::Backend->smoke( 
-	event => '_results', 
-	perl => $perl, 
+  my $backend = POE::Component::SmokeBox::Backend->smoke(
+	event => '_results',
+	perl => $perl,
 	module => $module,
 	debug => 0,
   );

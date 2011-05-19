@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use vars qw($VERSION);
 
-$VERSION = '0.46';
+$VERSION = '0.48';
 
 sub new {
   my $package = shift;
@@ -17,7 +17,7 @@ sub new {
 
 sub _data {
   my $self = shift;
-  $self->{_data} = 
+  $self->{_data} =
   {
   	check => [ 'DUMMY' ],
   	index => [ 'DUMMY' ],
@@ -102,7 +102,7 @@ a smoker uses.
 
 =item C<smoke>
 
-Returns an arrayref of command line options that get passed to C<perl> to actually test a distribution in a smoker. The 
+Returns an arrayref of command line options that get passed to C<perl> to actually test a distribution in a smoker. The
 distribution to smoke will be passed as $ARGV[0].
 
   [ '-MSome::Funky::Module', '-e', 'my $module = shift; test($module);' ]

@@ -3,12 +3,12 @@ package POE::Component::SmokeBox;
 use strict;
 use warnings;
 use POE qw(Component::SmokeBox::Backend Component::SmokeBox::JobQueue);
-use POE::Component::SmokeBox::Smoker; 
+use POE::Component::SmokeBox::Smoker;
 use POE::Component::SmokeBox::Job;
 use POE::Component::SmokeBox::Result;
 use vars qw($VERSION);
 
-$VERSION = '0.46';
+$VERSION = '0.48';
 
 sub spawn {
   my $package = shift;
@@ -19,7 +19,7 @@ sub spawn {
   my $self = bless \%params, $package;
   $self->{session_id} = POE::Session->create(
 	object_states => [
-	   $self => { 
+	   $self => {
 		shutdown      => '_shutdown',
 		add_smoker    => '_add_smoker',
 		del_smoker    => '_del_smoker',
@@ -86,7 +86,7 @@ sub _shutdown {
   my ($kernel,$self) = @_[KERNEL,OBJECT];
   if ( $self->{alias} ) {
 	$kernel->alias_remove($_) for $kernel->alias_list();
-  } 
+  }
   else {
 	$kernel->refcount_decrement( $self->{session_id} => __PACKAGE__ );
   }
@@ -159,7 +159,7 @@ sub _submit {
   my $args;
   if ( ref( $_[ARG0] ) eq 'HASH' ) {
      $args = { %{ $_[ARG0] } };
-  } 
+  }
   else {
      $args = { @_[ARG0..$#_] };
   }
@@ -182,9 +182,9 @@ sub _submit {
   else {
      $args->{session} = $sender->ID();
   }
-  
+
   warn "No smokers have been defined yet!!!!!\n" unless scalar @{ $self->{queues} };
-  
+
   foreach my $q ( @{ $self->{queues} } ) {
      $args->{smokers} = [ @{ $q->{smokers} } ];
      $q->{queue}->submit( $args );
@@ -218,9 +218,9 @@ POE::Component::SmokeBox - POE enabled CPAN smoke testing with added value.
   use POE::Component::SmokeBox::Smoker;
   use POE::Component::SmokeBox::Job;
   use Getopt::Long;
-  
+
   $|=1;
-  
+
   my $perl;
 
   GetOptions( 'perl=s' => \$perl, );
@@ -228,19 +228,19 @@ POE::Component::SmokeBox - POE enabled CPAN smoke testing with added value.
   die "No 'perl' specified\n" unless $perl;
 
   die "No modules specified to smoke\n" unless scalar @ARGV;
-  
+
   my $smokebox = POE::Component::SmokeBox->spawn();
-  
+
   POE::Session->create(
         package_states => [
            'main' => [ qw(_start _stop _results) ],
         ],
         heap => { perl => $perl, pending => [ @ARGV ] },
   );
-  
+
   $poe_kernel->run();
   exit 0;
-  
+
   sub _start {
     my ($kernel,$heap) = @_[KERNEL,HEAP];
 
@@ -248,17 +248,17 @@ POE::Component::SmokeBox - POE enabled CPAN smoke testing with added value.
 
     $smokebox->add_smoker( $smoker );
 
-    $smokebox->submit( event => '_results', 
+    $smokebox->submit( event => '_results',
 		 job => POE::Component::SmokeBox::Job->new( command => 'smoke', module => $_ ) )
        			for @{ $heap->{pending} };
     undef;
   }
-  
+
   sub _stop {
     $smokebox->shutdown();
     undef;
   }
-  
+
   sub _results {
     my $results = $_[ARG0];
     print $_, "\n" for map { @{ $_->{log} } } $results->{result}->results();
@@ -273,7 +273,7 @@ extensible method for testing CPAN distributions against various different smoke
 A smoker backend is defined using a L<POE::Component::SmokeBox::Smoker> object and is basically
 the path to a C<perl> executable that is configured for CPAN Testing and its associated environment settings.
 
-The C<perl> executable must be configured appropriately to support CPAN testing with any of the currently 
+The C<perl> executable must be configured appropriately to support CPAN testing with any of the currently
 supported backends, L<CPANPLUS::YACSmoke>, L<CPAN::YACSmoke> or L<CPAN::Reporter>. Additional backends may be
 supported by inheriting and extending the backend base class L<POE::Component::SmokeBox::Backend::Base>.
 
@@ -337,7 +337,7 @@ Submits a job to the smokebox. Takes a number of parameters.
 
 =item C<shutdown>
 
-Terminates the smokebox component. 
+Terminates the smokebox component.
 
 =back
 
@@ -363,7 +363,7 @@ Submits a job to the smokebox. Takes a number of parameters.
 
 =item C<shutdown>
 
-Terminates the smokebox component. 
+Terminates the smokebox component.
 
 =back
 

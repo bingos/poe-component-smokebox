@@ -9,7 +9,7 @@ my $smokebox =  POE::Component::SmokeBox->spawn( options => { trace => 0 } );
 isa_ok( $smokebox, 'POE::Component::SmokeBox' );
 
 POE::Session->create(
-  package_states => [ 
+  package_states => [
     'main' => [qw(_start _stop _results)],
   ],
   options => { trace => 0 },

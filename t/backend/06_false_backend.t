@@ -20,10 +20,10 @@ exit 0;
 
 sub _start {
   my ($kernel,$heap) = @_[KERNEL,HEAP];
-  my $backend = POE::Component::SmokeBox::Backend->check( 
+  my $backend = POE::Component::SmokeBox::Backend->check(
 	type => 'CORE::Badger',
-	event => '_results', 
-	perl => $perl, 
+	event => '_results',
+	perl => $perl,
 	debug => 0,
   );
   ok( !$backend, 'The $backend is undefined' );

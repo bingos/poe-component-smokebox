@@ -6,7 +6,7 @@ use Params::Check qw(check);
 use base qw(Object::Accessor);
 use vars qw($VERSION $VERBOSE);
 
-$VERSION = '0.46';
+$VERSION = '0.48';
 
 sub new {
   my $package = shift;
@@ -93,7 +93,7 @@ Creates a new POE::Component::SmokeBox::Job object. Takes a number of parameters
 
 =head1 METHODS
 
-Accessor methods are provided via L<Object::Accessor>. 
+Accessor methods are provided via L<Object::Accessor>.
 
 =over
 
@@ -150,7 +150,7 @@ Copyright C<(C)> Chris Williams
 
 This module may be used, modified, and distributed under the same terms as Perl itself. Please see the license that came with your Perl distribution for details.
 
-=head1 SEE ALSO 
+=head1 SEE ALSO
 
 L<POE::Component::SmokeBox>
 

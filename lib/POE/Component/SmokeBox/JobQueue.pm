@@ -6,7 +6,7 @@ use POE qw(Component::SmokeBox::Backend Component::SmokeBox::Job Component::Smok
 use Params::Check qw(check);
 use vars qw($VERSION);
 
-$VERSION = '0.46';
+$VERSION = '0.48';
 
 # Stolen from POE::Wheel. This is static data, shared by all
 my $current_id = 0;
@@ -172,7 +172,7 @@ sub _submit {
      event   => { required => 1, defined => 1, },
      session => { defined => 1, allow => [ sub { return 1 if $poe_kernel->alias_resolve( $_[0] ); }, ], },
      type    => { defined => 1, allow => [qw(push unshift)], default => 'push', },
-     job     => { required => 1, defined => 1, 
+     job     => { required => 1, defined => 1,
 		  allow => [ sub { return 1 if ref $_[0] and $_[0]->isa('POE::Component::SmokeBox::Job'); }, ], },
      smokers => { required => 1, defined => 1, allow => [
                 sub {
@@ -367,7 +367,7 @@ POE::Component::SmokeBox::JobQueue - An array based queue for SmokeBox
 
   sub _start {
     my $smoker = POE::Component::SmokeBox::Smoker->new( perl => $perl );
-    my $job = POE::Component::SmokeBox::Job->new( 
+    my $job = POE::Component::SmokeBox::Job->new(
 	type => 'CPANPLUS::YACSmoke',
 	command => 'smoke',
 	module => 'B/BI/BINGOS/POE-Component-IRC-5.88.tar.gz',
@@ -499,7 +499,7 @@ An event will be sent on process completion with a hashref as C<ARG0>:
   'event', the event that will be sent with the results;
   'session', the session ID the above event will be sent to;
 
-The results will be same as returned by L<POE::Component::SmokeBox::Backend>. They may be obtained by querying the 
+The results will be same as returned by L<POE::Component::SmokeBox::Backend>. They may be obtained by querying the
 L<POE::Component::SmokeBox::Result> object:
 
   $_[ARG0]->{result}->results() # produces a list
@@ -526,7 +526,7 @@ Copyright C<(C)> Chris Williams
 
 This module may be used, modified, and distributed under the same terms as Perl itself. Please see the license that came with your Perl distribution for details.
 
-=head1 SEE ALSO 
+=head1 SEE ALSO
 
 L<POE::Component::SmokeBox::Backend>
 
