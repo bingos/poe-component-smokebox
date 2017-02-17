@@ -1,3 +1,4 @@
+use if ! ( grep { $_ eq '.' } @INC ), qw[lib .];
 use strict;
 use inc::Module::Install;
 name 'POE-Component-SmokeBox';
