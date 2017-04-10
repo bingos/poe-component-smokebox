@@ -1,11 +1,10 @@
 package POE::Component::SmokeBox::Backend::CPAN::YACSmoke;
 
+#ABSTRACT: a backend for CPAN::YACSmoke smokers.
+
 use strict;
 use warnings;
 use base qw(POE::Component::SmokeBox::Backend::Base);
-use vars qw($VERSION);
-
-$VERSION = '0.50';
 
 sub _data {
   my $self = shift;
@@ -19,11 +18,8 @@ sub _data {
 }
 
 1;
-__END__
 
-=head1 NAME
-
-POE::Component::SmokeBox::Backend::CPAN::YACSmoke - a backend for CPAN::YACSmoke smokers.
+=pod
 
 =head1 DESCRIPTION
 
@@ -47,16 +43,6 @@ Returns [ '-MCPANPLUS::Backend', '-e', 'CPANPLUS::Backend->new()->reload_indices
 Returns [ '-MCPAN::YACSmoke', '-e', 'my $module = shift; my $smoke = CPAN::YACSmoke->new(); $smoke->test($module);' ]
 
 =back
-
-=head1 AUTHOR
-
-Chris C<BinGOs> Williams
-
-=head1 LICENSE
-
-Copyright C<(c)> Chris Williams.
-
-This module may be used, modified, and distributed under the same terms as Perl itself. Please see the license that came with your Perl distribution for details.
 
 =head1 SEE ALSO
 

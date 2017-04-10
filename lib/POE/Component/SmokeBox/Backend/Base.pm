@@ -1,10 +1,9 @@
 package POE::Component::SmokeBox::Backend::Base;
 
+#ABSTRACT: Base class for Backend smokers.
+
 use strict;
 use warnings;
-use vars qw($VERSION);
-
-$VERSION = '0.50';
 
 sub new {
   my $package = shift;
@@ -42,11 +41,8 @@ sub smoke {
 }
 
 1;
-__END__
 
-=head1 NAME
-
-POE::Component::SmokeBox::Backend::Base - Base class for Backend smokers.
+=pod
 
 =head1 SYNOPSIS
 
@@ -113,16 +109,6 @@ An internal method that gets called from C<new()> to initialise the internal dat
 set your data in sub-classes.
 
 =back
-
-=head1 AUTHOR
-
-Chris C<BinGOs> Williams <chris@bingosnet.co.uk>
-
-=head1 LICENSE
-
-Copyright C<(c)> Chris Williams.
-
-This module may be used, modified, and distributed under the same terms as Perl itself. Please see the license that came with your Perl distribution for details.
 
 =head1 SEE ALSO
 

@@ -1,11 +1,10 @@
 package POE::Component::SmokeBox::Backend::CPAN::Reporter::Smoker;
 
+#ABSTRACT: a backend for CPAN::Reporter::Smoker smokers.
+
 use strict;
 use warnings;
 use base qw(POE::Component::SmokeBox::Backend::Base);
-use vars qw($VERSION);
-
-$VERSION = '0.50';
 
 sub _data {
   my $self = shift;
@@ -19,11 +18,8 @@ sub _data {
 }
 
 1;
-__END__
 
-=head1 NAME
-
-POE::Component::SmokeBox::Backend::CPAN::Reporter::Smoker - a backend for CPAN::Reporter::Smoker smokers.
+=pod
 
 =head1 DESCRIPTION
 
@@ -47,16 +43,6 @@ Returns [ '-MCPAN', '-MCPAN::HandleConfig', '-e', 'CPAN::HandleConfig->load; CPA
 Returns [ '-MCPAN::Reporter::Smoker', '-e', 'my $module = shift; start( list => [ $module ] );' ]
 
 =back
-
-=head1 AUTHOR
-
-Chris C<BinGOs> Williams
-
-=head1 LICENSE
-
-Copyright C<(c)> Chris Williams.
-
-This module may be used, modified, and distributed under the same terms as Perl itself. Please see the license that came with your Perl distribution for details.
 
 =head1 SEE ALSO
 

@@ -1,12 +1,12 @@
 package POE::Component::SmokeBox::Job;
 
+#ABSTRACT: Object defining a SmokeBox job.
+
 use strict;
 use warnings;
 use Params::Check qw(check);
 use base qw(Object::Accessor);
-use vars qw($VERSION $VERBOSE);
-
-$VERSION = '0.50';
+use vars qw($VERBOSE);
 
 sub new {
   my $package = shift;
@@ -52,11 +52,8 @@ sub dump_data {
 }
 
 1;
-__END__
 
-=head1 NAME
-
-POE::Component::SmokeBox::Job - Object defining a SmokeBox job.
+=pod
 
 =head1 SYNOPSIS
 
@@ -139,16 +136,6 @@ for the warnings and give the process more time to reach the limit. ( look at L<
 Returns all the data contained in the object as a list.
 
 =back
-
-=head1 AUTHOR
-
-Chris C<BinGOs> Williams
-
-=head1 LICENSE
-
-Copyright C<(C)> Chris Williams
-
-This module may be used, modified, and distributed under the same terms as Perl itself. Please see the license that came with your Perl distribution for details.
 
 =head1 SEE ALSO
 

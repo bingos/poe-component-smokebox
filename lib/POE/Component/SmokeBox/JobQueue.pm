@@ -1,12 +1,11 @@
 package POE::Component::SmokeBox::JobQueue;
 
+#ABSTRACT: An array based queue for SmokeBox
+
 use strict;
 use warnings;
 use POE qw(Component::SmokeBox::Backend Component::SmokeBox::Job Component::SmokeBox::Smoker Component::SmokeBox::Result);
 use Params::Check qw(check);
-use vars qw($VERSION);
-
-$VERSION = '0.50';
 
 # Stolen from POE::Wheel. This is static data, shared by all
 my $current_id = 0;
@@ -339,11 +338,8 @@ sub _free_identifier {
 }
 
 1;
-__END__
 
-=head1 NAME
-
-POE::Component::SmokeBox::JobQueue - An array based queue for SmokeBox
+=pod
 
 =head1 SYNOPSIS
 
@@ -515,16 +511,6 @@ Each result is a hashref:
   'excess_kill', only present if the job was killed due to excessive runtime;
   'term_kill', only present if the job was killed due to a poco shutdown event;
   'cb_kill', only present if the job was killed due to the callback returning false;
-
-=head1 AUTHOR
-
-Chris C<BinGOs> Williams
-
-=head1 LICENSE
-
-Copyright C<(C)> Chris Williams
-
-This module may be used, modified, and distributed under the same terms as Perl itself. Please see the license that came with your Perl distribution for details.
 
 =head1 SEE ALSO
 

@@ -1,5 +1,7 @@
 package POE::Component::SmokeBox::Backend;
 
+#ABSTRACT: smoker backend to POE::Component::SmokeBox
+
 use strict;
 use warnings;
 use Carp;
@@ -13,9 +15,6 @@ use POE qw[Wheel::Run Filter::Line];
 use Digest::SHA qw[sha256_hex];
 use Env::Sanctify;
 use Module::Pluggable search_path => 'POE::Component::SmokeBox::Backend', sub_name => 'backends', except => 'POE::Component::SmokeBox::Backend::Base';
-use vars qw($VERSION);
-
-$VERSION = '0.50';
 
 my $GOT_KILLFAM;
 my $GOT_PTY;
@@ -429,11 +428,8 @@ sub _wheel_kill {
 }
 
 1;
-__END__
 
-=head1 NAME
-
-POE::Component::SmokeBox::Backend - smoker backend to POE::Component::SmokeBox
+=pod
 
 =head1 SYNOPSIS
 
@@ -567,16 +563,6 @@ Plus any of the parameters given to one of the constructors, including arbitary 
 
 Setting the environment variable C<PERL5_SMOKEBOX_DEBUG> will cause the component to spew out lots of
 information on STDERR.
-
-=head1 AUTHOR
-
-Chris C<BinGOs> Williams <chris@bingosnet.co.uk>
-
-=head1 LICENSE
-
-Copyright (C) Chris Williams
-
-This module may be used, modified, and distributed under the same terms as Perl itself. Please see the license that came with your Perl distribution for details.
 
 =head1 SEE ALSO
 

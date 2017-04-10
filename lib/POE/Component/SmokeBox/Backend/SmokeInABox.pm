@@ -1,11 +1,10 @@
 package POE::Component::SmokeBox::Backend::SmokeInABox;
 
+#ABSTRACT: a backend for Smoke In A Box smokers.
+
 use strict;
 use warnings;
 use base qw(POE::Component::SmokeBox::Backend::Base);
-use vars qw($VERSION);
-
-$VERSION = '0.50';
 
 sub _data {
   my $self = shift;
@@ -19,11 +18,8 @@ sub _data {
 }
 
 1;
-__END__
 
-=head1 NAME
-
-POE::Component::SmokeBox::Backend::SmokeInABox - a backend for Smoke In A Box smokers.
+=pod
 
 =head1 DESCRIPTION
 
@@ -49,16 +45,6 @@ Returns [ 'bin/cpanp-boxed', '-x', '--update_source' ]
 Returns [ 'bin/yactest-boxed' ]
 
 =back
-
-=head1 AUTHOR
-
-Chris C<BinGOs> Williams
-
-=head1 LICENSE
-
-Copyright E<copy> Chris Williams.
-
-This module may be used, modified, and distributed under the same terms as Perl itself. Please see the license that came with your Perl distribution for details.
 
 =head1 SEE ALSO
 

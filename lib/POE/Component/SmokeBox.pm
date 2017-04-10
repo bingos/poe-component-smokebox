@@ -1,14 +1,13 @@
 package POE::Component::SmokeBox;
 
+#ABSTRACT: POE enabled CPAN smoke testing with added value.
+
 use strict;
 use warnings;
 use POE qw(Component::SmokeBox::Backend Component::SmokeBox::JobQueue);
 use POE::Component::SmokeBox::Smoker;
 use POE::Component::SmokeBox::Job;
 use POE::Component::SmokeBox::Result;
-use vars qw($VERSION);
-
-$VERSION = '0.50';
 
 sub spawn {
   my $package = shift;
@@ -201,11 +200,7 @@ sub _unreg_ui {
 
 "We've Got a Fuzzbox and We're Gonna Use It";
 
-__END__
-
-=head1 NAME
-
-POE::Component::SmokeBox - POE enabled CPAN smoke testing with added value.
+=pod
 
 =head1 SYNOPSIS
 
@@ -393,16 +388,6 @@ Each result is a hashref:
   'excess_kill', only present if the job was killed due to excessive runtime;
   'term_kill', only present if the job was killed due to a poco shutdown event;
   'cb_kill', only present if the job was killed due to the callback returning false;
-
-=head1 AUTHOR
-
-Chris C<BinGOs> Williams <chris@bingosnet.co.uk>
-
-=head1 LICENSE
-
-Copyright (C) Chris Williams
-
-This module may be used, modified, and distributed under the same terms as Perl itself. Please see the license that came with your Perl distribution for details.
 
 =head1 SEE ALSO
 

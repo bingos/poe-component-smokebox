@@ -1,12 +1,12 @@
 package POE::Component::SmokeBox::Smoker;
 
+#ABSTRACT: encapsulates a smoker object.
+
 use strict;
 use warnings;
 use Params::Check qw(check);
 use base qw(Object::Accessor);
-use vars qw($VERSION $VERBOSE);
-
-$VERSION = '0.50';
+use vars qw($VERBOSE);
 
 sub new {
   my $package = shift;
@@ -41,11 +41,8 @@ sub dump_data {
 }
 
 1;
-__END__
 
-=head1 NAME
-
-POE::Component::SmokeBox::Smoker - encapsulates a smoker object.
+=pod
 
 =head1 SYNOPSIS
 
@@ -149,16 +146,6 @@ Now, if you have N smokers, it would look like this:
 Returns all the data contained in the object as a list.
 
 =back
-
-=head1 AUTHOR
-
-Chris C<BinGOs> Williams
-
-=head1 LICENSE
-
-Copyright C<(C)> Chris Williams
-
-This module may be used, modified, and distributed under the same terms as Perl itself. Please see the license that came with your Perl distribution for details.
 
 =head1 SEE ALSO
 
