@@ -114,6 +114,9 @@ sub spawn {
      croak "Problem loading backend '$type'\n";
      return;
   }
+  if ( $self->{backend}->can('digest') ) {
+     $self->{_reset_digest} = $self->{backend}->digest();
+  }
   my $cmd = $self->{command};
   $self->{program} = $self->{backend}->$cmd;
   unless ( $self->{program} or ref $self->{program} eq 'ARRAY' ) {
@@ -173,7 +176,12 @@ sub _start {
 
   $self->{_wheel_log} = [ ];
 
-  $self->_tie_digests();
+  if ( !$self->{_reset_digest} ) {
+    $self->_tie_digests();
+  }
+  else {
+    $self->{_digests} = { };
+  }
 
   $self->{_loop_detect} = 0;
   $self->{start_time} = time();
@@ -184,7 +192,12 @@ sub _start {
 
 sub _shutdown {
   my ($kernel,$self) = @_[KERNEL,OBJECT];
-  $self->_untie_digests();
+  if ( !$self->{_reset_digest} ) {
+    $self->_untie_digests();
+  }
+  else {
+    delete $self->{_digests};
+  }
   $self->{term_kill} = 1;
   $kernel->yield( '_wheel_kill', 'Killing current due to component shutdown event' );
   return;
@@ -285,7 +298,12 @@ sub _finalize_job {
 
   $self->{end_time} = time();
 
-  $self->_untie_digests();
+  if ( !$self->{_reset_digest} ) {
+    $self->_untie_digests();
+  }
+  else {
+    delete $self->{_digests};
+  }
 
   delete $self->{_loop_detect};
 
@@ -362,6 +380,12 @@ sub _detect_loop {
   my $input = shift || return;
   my $handle = shift || 'stdout';
   return if $self->{_loop_detect};
+  if ( my $reset = $self->{_reset_digest} ) {
+    if ( eval { $input =~ $reset } ) {
+      warn "Resetting digests\n" if $self->{debug} or $ENV{PERL5_SMOKEBOX_DEBUG};
+      $self->{_digests} = { };
+    }
+  }
   return if $input =~ /^\[(MSG|ERROR)\]/;
   my $digest = sha256_hex( $input );
 

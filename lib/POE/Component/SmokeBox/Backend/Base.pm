@@ -18,9 +18,10 @@ sub _data {
   my $self = shift;
   $self->{_data} =
   {
-  	check => [ 'DUMMY' ],
-  	index => [ 'DUMMY' ],
-	smoke => [ 'DUMMY' ],
+	  check  => [ 'DUMMY' ],
+	  index  => [ 'DUMMY' ],
+	  smoke  => [ 'DUMMY' ],
+    digest => [ 'DUMMY' ],
   };
   return;
 }
@@ -40,6 +41,11 @@ sub smoke {
   return $self->{_data}->{'smoke'} if $self->{_data}->{'smoke'};
 }
 
+sub digest {
+  my $self = shift;
+  return $self->{_data}->{'digest'} if $self->{_data}->{'digest'};
+}
+
 1;
 
 =pod
@@ -56,9 +62,10 @@ sub smoke {
     my $self = shift;
     $self->{_data} =
     {
-  	check => [ '-MSome::Funky::Module', '-e', '1' ],
-  	index => [ '-MSome::Funky::Module', '-e', 'reload_indices();' ],
-	smoke => [ '-MSome::Funky::Module', '-e', 'my $module = shift; test($module);' ],
+	    check  => [ '-MSome::Funky::Module', '-e', '1' ],
+	    index  => [ '-MSome::Funky::Module', '-e', 'reload_indices();' ],
+	    smoke  => [ '-MSome::Funky::Module', '-e', 'my $module = shift; test($module);' ],
+      digest => qr/Some pattern to match/,
     };
     return;
   }
@@ -102,6 +109,11 @@ Returns an arrayref of command line options that get passed to C<perl> to actual
 distribution to smoke will be passed as $ARGV[0].
 
   [ '-MSome::Funky::Module', '-e', 'my $module = shift; test($module);' ]
+
+=item C<digest>
+
+Returns a regular expression pattern that is used to match against smoker output. If the pattern is matched then the
+digests for detecting looping output are reset.
 
 =item C<_data>
 

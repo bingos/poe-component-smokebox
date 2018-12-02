@@ -10,9 +10,10 @@ sub _data {
   my $self = shift;
   $self->{_data} =
   {
-	check => [ '-MCPANPLUS::YACSmoke', '-e', 1 ],
-	index => [ '-MCPANPLUS::Backend', '-e', 'CPANPLUS::Backend->new()->reload_indices( update_source => 1 );' ],
-	smoke => [ '-MCPANPLUS::YACSmoke', '-e', 'my $module = shift; my $smoke = CPANPLUS::YACSmoke->new(); $smoke->test($module);' ],
+	check  => [ '-MCPANPLUS::YACSmoke', '-e', 1 ],
+	index  => [ '-MCPANPLUS::Backend', '-e', 'CPANPLUS::Backend->new()->reload_indices( update_source => 1 );' ],
+	smoke  => [ '-MCPANPLUS::YACSmoke', '-e', 'my $module = shift; my $smoke = CPANPLUS::YACSmoke->new(); $smoke->test($module);' ],
+  digest => qr/^\[MSG\] CPANPLUS is prefering/,
   };
   return;
 }
@@ -41,6 +42,12 @@ Returns [ '-MCPANPLUS::Backend', '-e', 'CPANPLUS::Backend->new()->reload_indices
 =item C<smoke>
 
 Returns [ '-MCPANPLUS::YACSmoke', '-e', 'my $module = shift; my $smoke = CPANPLUS::YACSmoke->new(); $smoke->test($module);' ]
+
+=item C<digest>
+
+Returns the following regexp:
+
+  qr/^\[MSG\] CPANPLUS is prefering/
 
 =back
 
