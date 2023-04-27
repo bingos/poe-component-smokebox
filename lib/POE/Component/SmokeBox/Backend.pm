@@ -13,8 +13,11 @@ use POSIX qw( O_CREAT O_RDWR O_RDONLY );         # for SDBM_File
 use SDBM_File;
 use POE qw[Wheel::Run Filter::Line];
 use Digest::SHA qw[sha256_hex];
+use Regexp::Assemble;
 use Env::Sanctify;
 use Module::Pluggable search_path => 'POE::Component::SmokeBox::Backend', sub_name => 'backends', except => 'POE::Component::SmokeBox::Backend::Base';
+
+use constant ON_FREEBSD => $^O =~ m!^(free|midnight|dragonfly)(bsd)?$! ? 1 : 0;
 
 my $GOT_KILLFAM;
 my $GOT_PTY;
@@ -390,7 +393,10 @@ sub _detect_loop {
   my $digest = sha256_hex( $input );
 
   my $weighting;
-  if ( $self->{check_warnings} and length( $input ) <= 5000 ) {
+  if ( ON_FREEBSD and $handle eq 'stderr' and _fbsd_compiler_warnings($input) ) {
+    $weighting = 0.01;
+  }
+  elsif ( $self->{check_warnings} and length( $input ) <= 5000 ) {
     $weighting = ( $handle eq 'stderr' and String::Perl::Warnings::is_warning($input) ) ? 1 : 10;
   } else {
     $weighting = $handle eq 'stderr' ? 1 : 10;
@@ -404,6 +410,30 @@ sub _detect_loop {
   }
   return unless ++$self->{_digests}->{ $digest } > 3000;
   return $self->{_loop_detect} = 1;
+}
+
+{
+  my $re = Regexp::Assemble->new()
+              ->add('note: expanded from macro')
+              ->add('note: .+? token is here')
+              ->add('tokens terminating statement expression appear in different macro expansion contexts')
+              ->add('tokens introducing statement expression appear in different macro expansion contexts')
+              ->add('STMT_START')
+              ->add('STMT_END')
+              ->add('PUSHMARK')
+              ->add('XSRETURN')
+              ->add('EXTEND')
+              ->add('SvTAINT')
+              ->add('SvCUR_set')
+              ->add('PUSHTARG')
+              ->add('^')
+              ->add('~')
+              ->re;
+  sub _fbsd_compiler_warnings {
+    my $line = shift;
+    return 1 if $line =~ m!$re!;
+    return;
+  }
 }
 
 sub _wheel_idle {
